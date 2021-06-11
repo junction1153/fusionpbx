@@ -1289,7 +1289,7 @@ $text['label-effective_caller_id_number']['ru-ru'] = "Эффективный и�
 $text['label-effective_caller_id_number']['sv-se'] = "Effektiv Nummerpresentation";
 $text['label-effective_caller_id_number']['uk-ua'] = "";
 
-$text['label-effective_caller_id_name']['en-us'] = "Effective Caller ID Name";
+$text['label-effective_caller_id_name']['en-us'] = "Name";
 $text['label-effective_caller_id_name']['en-gb'] = "Effective Caller ID Name";
 $text['label-effective_caller_id_name']['ar-eg'] = "إسم المتصل الفعال";
 $text['label-effective_caller_id_name']['de-at'] = "Tatsächliche Anruferkennung (Name)"; //copied from de-de
