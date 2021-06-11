@@ -130,8 +130,6 @@
 		$fax_email_inbound_subject_tag = $_POST["fax_email_inbound_subject_tag"];
 		$fax_email_outbound_subject_tag = $_POST["fax_email_outbound_subject_tag"];
 		$fax_email_outbound_authorized_senders = $_POST["fax_email_outbound_authorized_senders"];
-		$fax_email_outbound_callerid = $_POST["fax_email_outbound_callerid"];
-		$fax_email_outbound_accountcode = $_POST["fax_email_outbound_accountcode"];
 		$fax_caller_id_name = $_POST["fax_caller_id_name"];
 		$fax_caller_id_number = $_POST["fax_caller_id_number"];
 		$fax_toll_allow = $_POST["fax_toll_allow"];
@@ -280,22 +278,11 @@
 				//prep authorized senders
 					if (sizeof($fax_email_outbound_authorized_senders) > 0) {
 						foreach ($fax_email_outbound_authorized_senders as $sender_num => $sender) {
-							//if ($sender == '' || !valid_email($sender)) { unset($fax_email_outbound_authorized_senders[$sender_num]); }
+							if ($sender == '' || (substr_count($sender, '@') == 1 && !valid_email($sender)) || substr_count($sender, '.') == 0) {
+								unset($fax_email_outbound_authorized_senders[$sender_num]);
+							}
 						}
 						$fax_email_outbound_authorized_senders = strtolower(implode(',', $fax_email_outbound_authorized_senders));
-					}
-					if (sizeof($fax_email_outbound_callerid) > 0) {
-						foreach ($fax_email_outbound_callerid as $sender_num1 => $sender1) {
-							//if ($sender == '' || !valid_email($sender)) { unset($fax_email_outbound_callerid[$sender_num]); }
-						}
-						$fax_email_outbound_callerid = implode(',', $fax_email_outbound_callerid);
-					}
-					if (sizeof($fax_email_outbound_accountcode) > 0) {
-						foreach ($fax_email_outbound_accountcode as $sender_num2 => $sender2) {
-							//if ($sender == '' || !valid_email($sender)) { unset($fax_email_outbound_callerid[$sender_num]); }
-						}
-						$fax_email_outbound_accountcode = 
-implode(',', $fax_email_outbound_accountcode);
 					}
 
 				if ($action == "add" && permission_exists('fax_extension_add')) {
@@ -340,14 +327,11 @@ implode(',', $fax_email_outbound_accountcode);
 							$array['fax'][0]['fax_email_connection_security'] = $fax_email_connection_security;
 							$array['fax'][0]['fax_email_connection_validate'] = $fax_email_connection_validate;
 							$array['fax'][0]['fax_email_connection_username'] = $fax_email_connection_username;
-						if (permission_exists('fax_extension_advanced') && if_group("superadmin")) {
-							$array['fax'][0]['fax_email_connection_password'] = $fax_email_connection_password; }
+							$array['fax'][0]['fax_email_connection_password'] = $fax_email_connection_password;
 							$array['fax'][0]['fax_email_connection_mailbox'] = $fax_email_connection_mailbox;
 							$array['fax'][0]['fax_email_inbound_subject_tag'] = $fax_email_inbound_subject_tag;
 							$array['fax'][0]['fax_email_outbound_subject_tag'] = $fax_email_outbound_subject_tag;
 							$array['fax'][0]['fax_email_outbound_authorized_senders'] = $fax_email_outbound_authorized_senders;
-							$array['fax'][0]['fax_email_outbound_callerid'] = $fax_email_outbound_callerid;
-							$array['fax'][0]['fax_email_outbound_accountcode'] = $fax_email_outbound_accountcode;
 						}
 						$array['fax'][0]['fax_caller_id_name'] = $fax_caller_id_name;
 						$array['fax'][0]['fax_caller_id_number'] = $fax_caller_id_number;
@@ -374,6 +358,12 @@ implode(',', $fax_email_outbound_accountcode);
 					//revoke temp permissions
 						$p->delete('fax_add', 'temp');
 						$p->delete('fax_edit', 'temp');
+
+					//clear the destinations session array
+						if (isset($_SESSION['destinations']['array'])) {
+							unset($_SESSION['destinations']['array']);
+						}
+
 				}
 
 				//get the dialplan_uuid
@@ -441,8 +431,6 @@ implode(',', $fax_email_outbound_accountcode);
 			$fax_email_inbound_subject_tag = $row["fax_email_inbound_subject_tag"];
 			$fax_email_outbound_subject_tag = $row["fax_email_outbound_subject_tag"];
 			$fax_email_outbound_authorized_senders = $row["fax_email_outbound_authorized_senders"];
-			$fax_email_outbound_callerid = $row["fax_email_outbound_callerid"];
-			$fax_email_outbound_accountcode = $row["fax_email_outbound_accountcode"];
 			$fax_caller_id_name = $row["fax_caller_id_name"];
 			$fax_caller_id_number = $row["fax_caller_id_number"];
 			$fax_toll_allow = $row["fax_toll_allow"];
@@ -512,7 +500,7 @@ implode(',', $fax_email_outbound_accountcode);
 	echo "	}\n";
 	echo "	function add_sender() {\n";
 	echo "		var newdiv = document.createElement('div');\n";
-	echo "		newdiv.innerHTML = \"<input type='text' class='formfld' style='width: 150px; min-width: 150px; max-width: 150px; margin-top: 3px;' name='fax_email_outbound_authorized_senders[]' maxlength='255'><input type='text' class='formfld' style='width: 150px; min-width: 150px; max-width: 150px; margin-top: 3px;' name='fax_email_outbound_callerid[]' maxlength='255'><input type='text' class='formfld' style='width: 150px; min-width: 150px; max-width: 150px; margin-top: 3px;' name='fax_email_outbound_accountcode[]' maxlength='255'>\";";
+	echo "		newdiv.innerHTML = \"<input type='text' class='formfld' style='width: 225px; min-width: 225px; max-width: 225px; margin-top: 3px;' name='fax_email_outbound_authorized_senders[]' maxlength='255'>\";";
 	echo "		document.getElementById('authorized_senders').appendChild(newdiv);";
 	echo "	}\n";
 	echo "</script>\n";
@@ -908,7 +896,7 @@ implode(',', $fax_email_outbound_accountcode);
 
 		echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 		echo "	<tr>";
-		echo "		<td width='30%' valign='top'>";//HP:
+		echo "		<td width='50%' valign='top'>";
 
 			echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
@@ -985,7 +973,6 @@ implode(',', $fax_email_outbound_accountcode);
 			echo "</td>\n";
 			echo "</tr>\n";
 
-if (permission_exists('fax_extension_advanced') && if_group("superadmin")) {
 			echo "<tr>\n";
 			echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
 			echo "	".$text['label-email_connection_password']."\n";
@@ -997,7 +984,6 @@ if (permission_exists('fax_extension_advanced') && if_group("superadmin")) {
 			echo "	".$text['description-email_connection_password']."\n";
 			echo "</td>\n";
 			echo "</tr>\n";
-}
 
 			echo "<tr>\n";
 			echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
@@ -1014,7 +1000,7 @@ if (permission_exists('fax_extension_advanced') && if_group("superadmin")) {
 
 		echo "		</td>";
 		echo "		<td style='white-space: nowrap;'>&nbsp;&nbsp;&nbsp;&nbsp;</td>";
-		echo "		<td width='70%' valign='top'>"; //HP:
+		echo "		<td width='50%' valign='top'>";
 
 			echo "<table width='100%' border='0' cellpadding='0' cellspacing='0'>\n";
 
@@ -1070,29 +1056,9 @@ if (permission_exists('fax_extension_advanced') && if_group("superadmin")) {
 				else {
 					$senders[] = $fax_email_outbound_authorized_senders;
 				}
-				if (substr_count($fax_email_outbound_callerid, ',') > 0) {
-					$outbound_callerid_senders = explode(',', $fax_email_outbound_callerid);
-				}
-				else {
-					$outbound_callerid_senders[] = $fax_email_outbound_callerid;
-				}
-				if (substr_count($fax_email_outbound_accountcode, ',') > 0) {
-					$outbound_accountcode_senders = explode(',', $fax_email_outbound_accountcode);
-				}
-				else {
-					$outbound_accountcode_senders[] = $fax_email_outbound_accountcode;
-				}
 				$senders[] = ''; // empty one
-					echo "<span class='vncell' style='width: 150px; min-width: 150px; max-width: 150px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."'>Senders</span>";
-					echo "<span class='vncell' style='margin-left:95px;width: 150px; min-width: 150px; max-width: 150px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."'>Caller ID</span>";
-					echo "<span class='vncell' style='margin-left:95px;width: 150px; min-width: 150px; max-width: 150px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."'>Account Code</span><br>";
 				foreach ($senders as $sender_num => $sender) {
-					if($sender != ""){
-					echo "	<input class='formfld' style='width: 150px; min-width: 150px; max-width: 150px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."' type='text' name='fax_email_outbound_authorized_senders[]' maxlength='255' value=\"$sender\">";
-					$outbound_callerid_senders_val = $outbound_callerid_senders[$sender_num]; 
-					echo "	<input class='formfld' style='width: 150px; min-width: 150px; max-width: 150px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."' type='text' name='fax_email_outbound_callerid[]' maxlength='255' value=\"$outbound_callerid_senders_val\">";
-					echo "	<input class='formfld' style='width: 150px; min-width: 150px; max-width: 150px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."' type='text' name='fax_email_outbound_accountcode[]' maxlength='255' value=\"$outbound_accountcode_senders[$sender_num]\">".((sizeof($senders) > 0 && $sender_num < (sizeof($senders) - 1) ) ? "<br>" : null);
-					}
+					echo "	<input class='formfld' style='width: 225px; min-width: 225px; max-width: 225px; ".(($sender_num > 0) ? "margin-top: 3px;" : null)."' type='text' name='fax_email_outbound_authorized_senders[]' maxlength='255' value=\"$sender\">".((sizeof($senders) > 0 && $sender_num < (sizeof($senders) - 1) ) ? "<br>" : null);
 				}
 				echo "			</td>";
 				echo "			<td style='vertical-align: bottom;'>";

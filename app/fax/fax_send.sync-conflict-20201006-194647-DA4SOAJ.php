@@ -399,8 +399,7 @@ if (!function_exists('fax_split_dtmf')) {
 					//exec($cmd);
 
 					//convert pdf to tif
-//					$cmd = gs_cmd("-q -sDEVICE=tiffg32d -r".$gs_r." -g".$gs_g." -dBATCH -dPDFFitPage -dNOPAUSE -sOutputFile=".correct_path($fax_name).".tif -- ".correct_path($fax_name).".pdf -c quit");
-					$cmd = gs_cmd("-q -r".$gs_r." -g".$gs_g." -dBATCH -dPDFFitPage -dSAFER -dNOPAUSE -dBATCH -sOutputFile=".correct_path($fax_name).".tif -sDEVICE=tiffg4 -Ilib stocht.ps -c \"{ .75 gt { 1 } { 0 } ifelse} settransfer\" -- ".correct_path($fax_name).".pdf -c quit");
+					$cmd = gs_cmd("-q -sDEVICE=tiffg32d -r".$gs_r." -g".$gs_g." -dBATCH -dPDFFitPage -dNOPAUSE -sOutputFile=".correct_path($fax_name).".tif -- ".correct_path($fax_name).".pdf -c quit");
 					// echo($cmd . "<br/>\n");
 					exec($cmd);
 					@unlink($dir_fax_temp.'/'.$fax_name.'.pdf');
@@ -773,79 +772,20 @@ if (!function_exists('fax_split_dtmf')) {
 
                         $mailto_address = $from_check;
 		}
-//HP:START
-		$custom_sender_array = array();
-		if(isset($fax_uuid)){
-			$sql = "select * from v_fax ";
-			$sql .= "where fax_uuid = '".$fax_uuid."' ";
-			$database = new database;
-			$result = $database->select($sql, null, 'all');
-			unset($sql);
 
-			$fax_email_outbound_callerid = $result[0]["fax_email_outbound_callerid"];
-			$fax_email_outbound_accountcode = $result[0]["fax_email_outbound_accountcode"];
-			$fax_email_outbound_authorized_senders = strtolower($result[0]["fax_email_outbound_authorized_senders"]);
-			//get authorized sender(s)
-			if (substr_count($fax_email_outbound_authorized_senders, ',') > 0) {
-				$authorized_senders = explode(',', $fax_email_outbound_authorized_senders);
-			}
-			else {
-				$authorized_senders[] = $fax_email_outbound_authorized_senders;
-			}
-			if (substr_count($fax_email_outbound_callerid, ',') > 0) {
-				$caller_id_senders = explode(',', $fax_email_outbound_callerid);
-			}
-			else {
-				$caller_id_senders[] = $fax_email_outbound_callerid;
-			}
-			if (substr_count($fax_email_outbound_accountcode, ',') > 0) {
-				$accountcode_senders = explode(',', $fax_email_outbound_accountcode);
-			}
-			else {
-				$accountcode_senders[] = $fax_email_outbound_accountcode;
-			}
-			if(!empty($authorized_senders)){
-				foreach($authorized_senders as $key=>$val){
-					$txt = "prev custom_sender_array::".$val."\n";
-					$custom_sender_array[$val]= array(
-									'caller_id'=>$caller_id_senders[$key],
-									'accountcode'=>$accountcode_senders[$key]
-								);
-				}
-			}
-		}
-		$mailto_address_explode = explode("@",$mailto_address);
-		if(!empty($custom_sender_array) && isset($custom_sender_array[$mailto_address])){
-			if(isset($custom_sender_array[$mailto_address]['accountcode']) && $custom_sender_array[$mailto_address]['accountcode'] != "")
-				$fax_accountcode = $custom_sender_array[$mailto_address]['accountcode'];
-			if(isset($custom_sender_array[$mailto_address]['caller_id']) && $custom_sender_array[$mailto_address]['caller_id'] != ""){
-				$fax_caller_id_number = $custom_sender_array[$mailto_address]['caller_id'];
-				$fax_caller_id_name = $custom_sender_array[$mailto_address]['caller_id'];
-			}
-		}elseif(!empty($custom_sender_array) && isset($mailto_address_explode[1]) && isset($custom_sender_array["@".$mailto_address_explode[1]])){
-			if(isset($custom_sender_array["@".$mailto_address_explode[1]]['accountcode']) && $custom_sender_array["@".$mailto_address_explode[1]]['accountcode'] != "")
-				$fax_accountcode = $custom_sender_array["@".$mailto_address_explode[1]]['accountcode'];
-
-			if(isset($custom_sender_array["@".$mailto_address_explode[1]]['caller_id']) && $custom_sender_array["@".$mailto_address_explode[1]]['caller_id'] != ""){
-				$fax_caller_id_name = $custom_sender_array["@".$mailto_address_explode[1]]['caller_id'];
-				$fax_caller_id_number = $custom_sender_array["@".$mailto_address_explode[1]]['caller_id'];
-				}
-
-		}
-//HP:END
 		//send the fax
 		$fax_file = $dir_fax_temp."/".$fax_instance_uuid.".tif";
-		$tmp_dial_string  = "for_fax=1,";
-		$tmp_dial_string .= "accountcode='"                  . $fax_accountcode         . "',";
-//		$tmp_dial_string .= "sip_h_X-accountcode='"          . $fax_accountcode         . "',";
-                $tmp_dial_string .= "sip_h_X-customacc='"          . $fax_accountcode         . "',";
-		$tmp_dial_string .= "domain_uuid="                   . $_SESSION["domain_uuid"] . ",";
-		$tmp_dial_string .= "domain_name="                   . $_SESSION["domain_name"] . ",";
-		$tmp_dial_string .= "origination_caller_id_name='"   . $fax_caller_id_name      . "',";
-		$tmp_dial_string .= "origination_caller_id_number='" . $fax_caller_id_number    . "',";
-		$tmp_dial_string .= "fax_ident='"                    . $fax_caller_id_number    . "',";
-		$tmp_dial_string .= "fax_header='"                   . $fax_caller_id_name      . "',";
-		$tmp_dial_string .= "fax_file='"                     . $fax_file                . "',";
+		$dial_string  = "for_fax=1,";
+		$dial_string .= "accountcode='"                  . $fax_accountcode         . "',";
+//		$dial_string .= "sip_h_X-accountcode='"          . $fax_accountcode         . "',";
+                $dial_string .= "sip_h_X-customacc='"          . $fax_accountcode         . "',";
+		$dial_string .= "domain_uuid="                   . $_SESSION["domain_uuid"] . ",";
+		$dial_string .= "domain_name="                   . $_SESSION["domain_name"] . ",";
+		$dial_string .= "origination_caller_id_name='"   . $fax_caller_id_name      . "',";
+		$dial_string .= "origination_caller_id_number='" . $fax_caller_id_number    . "',";
+		$dial_string .= "fax_ident='"                    . $fax_caller_id_number    . "',";
+		$dial_string .= "fax_header='"                   . $fax_caller_id_name      . "',";
+		$dial_string .= "fax_file='"                     . $fax_file                . "',";
 		foreach ($fax_numbers as $fax_number) {
 
 			$fax_number = trim($fax_number);
@@ -871,7 +811,6 @@ if (!function_exists('fax_split_dtmf')) {
 			}
 
 			if ($fax_send_mode != 'queue') {
-				$dial_string = $tmp_dial_string;
 				$dial_string .= $fax_variables;
 				$dial_string .= "mailto_address='"     . $mailto_address   . "',";
 				$dial_string .= "mailfrom_address='"   . $mailfrom_address . "',";
@@ -896,7 +835,6 @@ if (!function_exists('fax_split_dtmf')) {
 			}
 			else { // enqueue
 				$wav_file = ''; //! @todo add custom message
-				$dial_string = $tmp_dial_string;
 				$response = fax_enqueue($fax_uuid, $fax_file, $wav_file, $mailto_address, $fax_uri, $fax_dtmf, $dial_string);
 			}
 		}

@@ -25,6 +25,7 @@
 	James Rose <james.o.rose@gmail.com>
 	Luis Daniel Lucio Quiroz <dlucio@okay.com.mx>
 	Errol Samuels <voiptology@gmail.com>
+	Corey Moullas <cmoullas@emak.tech>
 */
 
 if (!isset($included)) { $included = false; }
@@ -59,7 +60,7 @@ if (!$included) {
 	//pre-populate the form
 		if (is_uuid($_REQUEST['id']) && $_POST["persistformvar"] != "true") {
 			$fax_uuid = $_REQUEST["id"];
-			if (if_group("superadmin") || if_group("admin")) {
+			if (permission_exists('fax_extension_view_domain')) {
 				//show all fax extensions
 				$sql = "select fax_uuid, fax_extension, fax_caller_id_name, fax_caller_id_number, ";
 				$sql .= "fax_toll_allow, accountcode, fax_send_greeting ";
@@ -95,7 +96,7 @@ if (!$included) {
 					$fax_send_greeting = $row["fax_send_greeting"];
 			}
 			else {
-				if (!if_group("superadmin") && !if_group("admin")) {
+				if (!permission_exists('fax_extension_view_domain')) {
 					echo "access denied";
 					exit;
 				}
@@ -369,7 +370,9 @@ if (!function_exists('fax_split_dtmf')) {
 				$fax_name = str_replace("=", "_", $fax_name);
 
 				$attachment_file_name = $_files['name'][$index];
-				rename($dir_fax_temp.'/'.$attachment_file_name, $dir_fax_temp.'/'.$fax_name.'.'.$fax_file_extension);
+				if ($attachment_file_name != $fax_name.'.'.$fax_file_extension) {
+					rename($dir_fax_temp.'/'.$attachment_file_name, $dir_fax_temp.'/'.$fax_name.'.'.$fax_file_extension);
+				}
 				unset($attachment_file_name);
 
 				if (!$included) {
@@ -394,12 +397,7 @@ if (!function_exists('fax_split_dtmf')) {
 				if (file_exists($dir_fax_temp.'/'.$fax_name.'.pdf')) {
 					chdir($dir_fax_temp);
 
-					//$cmd = gs_cmd("-q -sDEVICE=psmono -r".$gs_r." -g".$gs_g." -dNOPAUSE -dBATCH -dSAFER -sOutputFile=".correct_path($fax_name).".pdf -- ".correct_path($fax_name).".pdf -c quit");
-					// echo($cmd . "<br/>\n");
-					//exec($cmd);
-
 					//convert pdf to tif
-//					$cmd = gs_cmd("-q -sDEVICE=tiffg32d -r".$gs_r." -g".$gs_g." -dBATCH -dPDFFitPage -dNOPAUSE -sOutputFile=".correct_path($fax_name).".tif -- ".correct_path($fax_name).".pdf -c quit");
 					$cmd = gs_cmd("-q -r".$gs_r." -g".$gs_g." -dBATCH -dPDFFitPage -dSAFER -dNOPAUSE -dBATCH -sOutputFile=".correct_path($fax_name).".tif -sDEVICE=tiffg4 -Ilib stocht.ps -c \"{ .75 gt { 1 } { 0 } ifelse} settransfer\" -- ".correct_path($fax_name).".pdf -c quit");
 					// echo($cmd . "<br/>\n");
 					exec($cmd);
@@ -459,7 +457,7 @@ if (!function_exists('fax_split_dtmf')) {
 			$display_logo = false;
 			if (!is_array($_SESSION['fax']['cover_logo'])) {
 				$logo = $_SERVER['DOCUMENT_ROOT'].PROJECT_PATH."/app/fax/resources/images/logo.jpg";
-				$display_logo = false;
+				$display_logo = true;
 			}
 			else if (is_null($_SESSION['fax']['cover_logo']['text'])) {
 				$logo = ''; //explicitly empty
@@ -485,7 +483,7 @@ if (!function_exists('fax_split_dtmf')) {
 						$raw = file_get_contents($logo);
 						if (file_put_contents($dir_fax_temp.'/'.$logo_filename, $raw)) {
 							$logo = $dir_fax_temp.'/'.$logo_filename;
-							$display_logo = false;
+							$display_logo = true;
 						}
 						else {
 							unset($logo);
@@ -493,7 +491,7 @@ if (!function_exists('fax_split_dtmf')) {
 					}
 					else {
 						$logo = $dir_fax_temp.'/'.$logo_filename;
-						$display_logo = false;
+						$display_logo = true;
 					}
 				}
 				else {
@@ -661,41 +659,14 @@ if (!function_exists('fax_split_dtmf')) {
 				@unlink($tif_file);
 			}
 
-			//generate pdf (a work around, as tiff2pdf was improperly inverting the colors)
+			//generate pdf from tif
 			$cmd = 'tiff2pdf -u i -p '.$fax_page_size.
 				' -w '.$page_width.
 				' -l '.$page_height.
 				' -f -o '.
 				correct_path($dir_fax_temp.'/'.$fax_instance_uuid.'.pdf').' '.
 				correct_path($dir_fax_temp.'/'.$fax_instance_uuid.'.tif');
-			// echo($cmd . "<br/>\n");
 			exec($cmd);
-
-			chdir($dir_fax_temp);
-
-			//$cmd = gs_cmd("-q -sDEVICE=psmono -r".$gs_r." -g".$gs_g." -dNOPAUSE -dBATCH -dSAFER -sOutputFile=".correct_path($fax_instance_uuid).".pdf -- ".correct_path($fax_instance_uuid).".pdf -c quit");
-			// echo($cmd . "<br/>\n");
-			//exec($cmd);
-
-			//convert pdf to tif
-			$cmd = gs_cmd('-q -sDEVICE=tiffg32d -r'.$gs_r.' -g'.$gs_g.' -dBATCH -dPDFFitPage -dNOPAUSE -sOutputFile='.
-				correct_path($fax_instance_uuid.'_temp.tif').
-				' -- '.$fax_instance_uuid.'.pdf -c quit');
-			// echo($cmd . "<br/>\n");
-			exec($cmd);
-
-			@unlink($dir_fax_temp.'/'.$fax_instance_uuid.".pdf");
-
-			$cmd = 'tiff2pdf -u i -p '.$fax_page_size.
-				' -w '.$page_width.
-				' -l '.$page_height.
-				' -f -o '.
-				correct_path($dir_fax_temp.'/'.$fax_instance_uuid.'.pdf').' '.
-				correct_path($dir_fax_temp.'/'.$fax_instance_uuid.'_temp.tif');
-			// echo($cmd . "<br/>\n");
-			exec($cmd);
-
-			@unlink($dir_fax_temp.'/'.$fax_instance_uuid."_temp.tif");
 		}
 		else {
 			if (!$included) {
@@ -761,84 +732,17 @@ if (!function_exists('fax_split_dtmf')) {
 		}
 
 		if ($mailto_address_fax != '' && $mailto_address_user != $mailto_address_fax) {
-                                        include_once 'fax_emails.php';
-
-//			$mailto_address = $mailto_address_fax.",".$mailto_address_user;
-                        $mailto_address = $from_check;
+			$mailto_address = $mailto_address_fax.",".$mailto_address_user;
 		}
 		else {
-//			$mailto_address = $mailto_address_user;
-                                  //      require("fax_emails.php");
-                                        include_once 'fax_emails.php';
-
-                        $mailto_address = $from_check;
+			$mailto_address = $mailto_address_user;
 		}
-//HP:START
-		$custom_sender_array = array();
-		if(isset($fax_uuid)){
-			$sql = "select * from v_fax ";
-			$sql .= "where fax_uuid = '".$fax_uuid."' ";
-			$database = new database;
-			$result = $database->select($sql, null, 'all');
-			unset($sql);
 
-			$fax_email_outbound_callerid = $result[0]["fax_email_outbound_callerid"];
-			$fax_email_outbound_accountcode = $result[0]["fax_email_outbound_accountcode"];
-			$fax_email_outbound_authorized_senders = strtolower($result[0]["fax_email_outbound_authorized_senders"]);
-			//get authorized sender(s)
-			if (substr_count($fax_email_outbound_authorized_senders, ',') > 0) {
-				$authorized_senders = explode(',', $fax_email_outbound_authorized_senders);
-			}
-			else {
-				$authorized_senders[] = $fax_email_outbound_authorized_senders;
-			}
-			if (substr_count($fax_email_outbound_callerid, ',') > 0) {
-				$caller_id_senders = explode(',', $fax_email_outbound_callerid);
-			}
-			else {
-				$caller_id_senders[] = $fax_email_outbound_callerid;
-			}
-			if (substr_count($fax_email_outbound_accountcode, ',') > 0) {
-				$accountcode_senders = explode(',', $fax_email_outbound_accountcode);
-			}
-			else {
-				$accountcode_senders[] = $fax_email_outbound_accountcode;
-			}
-			if(!empty($authorized_senders)){
-				foreach($authorized_senders as $key=>$val){
-					$txt = "prev custom_sender_array::".$val."\n";
-					$custom_sender_array[$val]= array(
-									'caller_id'=>$caller_id_senders[$key],
-									'accountcode'=>$accountcode_senders[$key]
-								);
-				}
-			}
-		}
-		$mailto_address_explode = explode("@",$mailto_address);
-		if(!empty($custom_sender_array) && isset($custom_sender_array[$mailto_address])){
-			if(isset($custom_sender_array[$mailto_address]['accountcode']) && $custom_sender_array[$mailto_address]['accountcode'] != "")
-				$fax_accountcode = $custom_sender_array[$mailto_address]['accountcode'];
-			if(isset($custom_sender_array[$mailto_address]['caller_id']) && $custom_sender_array[$mailto_address]['caller_id'] != ""){
-				$fax_caller_id_number = $custom_sender_array[$mailto_address]['caller_id'];
-				$fax_caller_id_name = $custom_sender_array[$mailto_address]['caller_id'];
-			}
-		}elseif(!empty($custom_sender_array) && isset($mailto_address_explode[1]) && isset($custom_sender_array["@".$mailto_address_explode[1]])){
-			if(isset($custom_sender_array["@".$mailto_address_explode[1]]['accountcode']) && $custom_sender_array["@".$mailto_address_explode[1]]['accountcode'] != "")
-				$fax_accountcode = $custom_sender_array["@".$mailto_address_explode[1]]['accountcode'];
-
-			if(isset($custom_sender_array["@".$mailto_address_explode[1]]['caller_id']) && $custom_sender_array["@".$mailto_address_explode[1]]['caller_id'] != ""){
-				$fax_caller_id_name = $custom_sender_array["@".$mailto_address_explode[1]]['caller_id'];
-				$fax_caller_id_number = $custom_sender_array["@".$mailto_address_explode[1]]['caller_id'];
-				}
-
-		}
-//HP:END
 		//send the fax
 		$fax_file = $dir_fax_temp."/".$fax_instance_uuid.".tif";
 		$tmp_dial_string  = "for_fax=1,";
 		$tmp_dial_string .= "accountcode='"                  . $fax_accountcode         . "',";
-//		$tmp_dial_string .= "sip_h_X-accountcode='"          . $fax_accountcode         . "',";
-                $tmp_dial_string .= "sip_h_X-customacc='"          . $fax_accountcode         . "',";
+		$tmp_dial_string .= "sip_h_X-accountcode='"          . $fax_accountcode         . "',";
 		$tmp_dial_string .= "domain_uuid="                   . $_SESSION["domain_uuid"] . ",";
 		$tmp_dial_string .= "domain_name="                   . $_SESSION["domain_name"] . ",";
 		$tmp_dial_string .= "origination_caller_id_name='"   . $fax_caller_id_name      . "',";
@@ -997,8 +901,7 @@ if (!$included) {
 		echo "	</div>\n";
 		echo "	<div style='clear: both;'></div>\n";
 		echo "</div>\n";
-
-		echo $text['description-2']." ".(if_group('superadmin') ? $text['description-3'] : null)."\n";
+		echo $text['description-2']." ".(permission_exists('fax_extension_view_domain') ? $text['description-3'] : null)."\n";
 		echo "<br /><br />\n";
 
 		echo "<table width='100%' border='0' cellspacing='0' cellpadding='0'>\n";
@@ -1182,38 +1085,44 @@ if (!$included) {
 		echo "</td>\n";
 		echo "</tr>\n";
 
-		echo "<tr>\n";
-		echo "<td class='vncell' valign='top' align='left' nowrap>\n";
-		echo "	".$text['label-fax-subject']."\n";
-		echo "</td>\n";
-		echo "<td class='vtable' align='left'>\n";
-		echo "	<input type='text' name='fax_subject' class='formfld' style='' value=''>\n";
-		echo "	<br />\n";
-		echo "	".$text['description-fax-subject']."\n";
-		echo "</td>\n";
-		echo "</tr>\n";
+		if (permission_exists('fax_subject')) {
+			echo "<tr>\n";
+			echo "<td class='vncell' valign='top' align='left' nowrap>\n";
+			echo "	".$text['label-fax-subject']."\n";
+			echo "</td>\n";
+			echo "<td class='vtable' align='left'>\n";
+			echo "	<input type='text' name='fax_subject' class='formfld' style='' value=''>\n";
+			echo "	<br />\n";
+			echo "	".$text['description-fax-subject']."\n";
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
 
-		echo "<tr>\n";
-		echo "<td class='vncell' valign='top' align='left' nowrap>\n";
-		echo "		".$text['label-fax-message']."\n";
-		echo "</td>\n";
-		echo "<td class='vtable' align='left'>\n";
-		echo "	<textarea type='text' name='fax_message' class='formfld' style='width: 65%; height: 175px;'></textarea>\n";
-		echo "<br />\n";
-		echo "	".$text['description-fax-message']."\n";
-		echo "</td>\n";
-		echo "</tr>\n";
+		if (permission_exists('fax_message')) {
+			echo "<tr>\n";
+			echo "<td class='vncell' valign='top' align='left' nowrap>\n";
+			echo "		".$text['label-fax-message']."\n";
+			echo "</td>\n";
+			echo "<td class='vtable' align='left'>\n";
+			echo "	<textarea type='text' name='fax_message' class='formfld' style='width: 65%; height: 175px;'></textarea>\n";
+			echo "<br />\n";
+			echo "	".$text['description-fax-message']."\n";
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
 
-		echo "<tr>\n";
-		echo "<td class='vncell' valign='top' align='left' nowrap>\n";
-		echo "	".$text['label-fax-footer']."\n";
-		echo "</td>\n";
-		echo "<td class='vtable' align='left'>\n";
-		echo "	<textarea type='text' name='fax_footer' class='formfld' style='width: 65%; height: 100px;'>".$_SESSION['fax']['text']."</textarea>\n";
-		echo "	<br />\n";
-		echo "	".$text['description-fax-footer']."\n";
-		echo "</td>\n";
-		echo "</tr>\n";
+		if (permission_exists('fax_footer')) {
+			echo "<tr>\n";
+			echo "<td class='vncell' valign='top' align='left' nowrap>\n";
+			echo "	".$text['label-fax-footer']."\n";
+			echo "</td>\n";
+			echo "<td class='vtable' align='left'>\n";
+			echo "	<textarea type='text' name='fax_footer' class='formfld' style='width: 65%; height: 100px;'>".$_SESSION['fax']['cover_footer']['text']."</textarea>\n";
+			echo "	<br />\n";
+			echo "	".$text['description-fax-footer']."\n";
+			echo "</td>\n";
+			echo "</tr>\n";
+		}
 
 		echo "</table>";
 		echo "<br /><br />\n";

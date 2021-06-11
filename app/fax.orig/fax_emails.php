@@ -26,7 +26,6 @@
 */
 
 include "root.php";
-include "resources/strpos.php";
 require_once "resources/require.php";
 require_once "resources/functions/object_to_array.php";
 require_once "resources/functions/parse_message.php";
@@ -152,9 +151,7 @@ if (is_array($result) && @sizeof($result) != 0) {
 		}
 
 		//get emails
-//		if ($emails = imap_search($connection, "SUBJECT \"[".$fax_email_outbound_subject_tag."]\"", SE_UID)) {
-         //       if ($emails = imap_search($connection, 'TO "fax@fax.jcnt.net"', SE_UID)) {
-                if ($emails = imap_search($connection, "ALL", SE_UID)) {
+		if ($emails = imap_search($connection, "SUBJECT \"[".$fax_email_outbound_subject_tag."]\"", SE_UID)) {
 
 			//get authorized sender(s)
 			if (substr_count($fax_email_outbound_authorized_senders, ',') > 0) {
@@ -173,11 +170,9 @@ if (is_array($result) && @sizeof($result) != 0) {
 				$metadata[0]['from'] = strtolower($tmp[0]['mailbox']."@".$tmp[0]['host']);
 
 				//check sender
-				$sender_authorized = false;
-				$from_check = ($metadata[0]['from']);
-
-//				if (in_array($metadata[0]['from'],$authorized_senders)) { $sender_authorized = true; }
-			if (strpos_arr($from_check,$authorized_senders) !==false) { $sender_authorized = true; }
+				$sender_email = $metadata[0]['from'];
+				$sender_domain = explode('@', $sender_email)[1];
+				$sender_authorized = in_array($sender_email, $authorized_senders) || in_array($sender_domain, $authorized_senders) ? true : false;
 				if ($sender_authorized) {
 
 					//add multi-lingual support
@@ -189,10 +184,8 @@ if (is_array($result) && @sizeof($result) != 0) {
 
 					//parse recipient fax number(s)
 					$fax_subject = $metadata[0]['subject'];
-
-//					$tmp = explode('Fax', $fax_subject); //closing bracket of subject tag
-                                        $tmp = $fax_subject;
-			//		$tmp = $tmp[1];
+					$tmp = explode(']', $fax_subject); //closing bracket of subject tag
+					$tmp = $tmp[1];
 					$tmp = str_replace(':', ',', $tmp);
 					$tmp = str_replace(';', ',', $tmp);
 					$tmp = str_replace('|', ',', $tmp);
