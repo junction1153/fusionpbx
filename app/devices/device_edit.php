@@ -363,6 +363,17 @@
 								//$array['devices'][0]['device_keys'][$y]['device_key_protected'] = $row["device_key_protected"];
 								$array['devices'][0]['device_keys'][$y]['device_key_label'] = $row["device_key_label"];
 								$array['devices'][0]['device_keys'][$y]['device_key_icon'] = $row["device_key_icon"];
+						//update key label
+                                        $array['devices'][0]['device_keys'][$y]["device_key_label"] = $row["device_key_label"];
+                                        $sql = "select effective_caller_id_name from v_extensions ";
+                                        $sql .= "where extension = :extension ";
+                                        $sql .= " and domain_uuid = :domain_uuid ";
+                                        $parameters['domain_uuid'] = $_SESSION['domain_uuid'];
+                                        $parameters['extension'] = $row["device_key_value"];
+                                        $database = new database;
+                                        $effective_caller_id_name_row = $database->select($sql, $parameters, 'row');
+                                        unset($sql, $parameters);
+                                        $array['devices'][0]['device_keys'][$y]["device_key_label"] = ($effective_caller_id_name_row && $effective_caller_id_name_row['effective_caller_id_name'] != "")?$effective_caller_id_name_row['effective_caller_id_name']:$row["device_key_label"];
 								$y++;
 							}
 						}
