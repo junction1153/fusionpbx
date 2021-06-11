@@ -279,6 +279,92 @@
 					}
 					if (is_dir($stream_path)) {
 						if (copy($stream_file_name_temp, $stream_path.'/'.$stream_file_name)) {
+							
+	//HP:START
+                                                        $sql = "select domain_uuid from v_domains ";
+                                                        $sql .= "where domain_name = :domain_name ";
+                                                        $parameters['domain_name'] = $stream_name;
+                                                        $v_domains = $database->select($sql, $parameters, 'row');
+                                                        unset($parameters);
+                                                        if (isset($v_domains) && !empty($v_domains) && is_uuid($v_domains['domain_uuid'])) {
+                                                                $sql = "select dialplan_uuid,dialplan_name from v_dialplans ";
+                                                                $sql .= "where (dialplan_name = :dialplan_uuid1 ";
+                                                                $parameters['dialplan_uuid1'] = 'domain-variables';
+
+                                                                $sql .= "or dialplan_name = :dialplan_uuid2 ) ";
+                                                                $parameters['dialplan_uuid2'] = 'user_hold_music';
+                                                                $sql .= " and domain_uuid = :domain_uuid  ";
+                                                                $parameters['domain_uuid'] = $v_domains['domain_uuid'];
+                                                                $database = new database;
+                                                                $row = $database->select($sql, $parameters, 'all');
+                                                                unset($parameters);
+                                                                if(!empty($row)){
+                                                                        foreach($row as $dialplan_value){
+                                                                                $sql = "delete from v_dialplan_details ";
+                                                                                $sql .= "where dialplan_uuid = :dialplan_uuid ";
+                                                                                $sql .= "and dialplan_detail_data LIKE '%hold_music=\${user_data%' ";
+                                                                                $parameters['dialplan_uuid'] = $dialplan_value['dialplan_uuid'];
+                                                                                $database = new database;
+                                                                                $database->execute($sql,$parameters);
+                                                                                unset($sql);
+                                                                                unset($parameters);
+
+                                                                                $sql = "select dialplan_detail_data,dialplan_detail_uuid from v_dialplan_details ";
+                                                                                $sql .= "where dialplan_uuid = :dialplan_uuid ";
+                                                                                $sql .= "and dialplan_detail_data LIKE '%hold_music%' ";
+                                                                                $parameters['dialplan_uuid'] = $dialplan_value['dialplan_uuid'];
+                                                                                $v_dialplan_details = $database->select($sql, $parameters, 'row');
+                                                                                unset($parameters);
+                                                                                if(empty($v_dialplan_details)){
+                                                                                        $sql = "select dialplan_detail_order from v_dialplan_details ";
+                                                                                        $sql .= "where dialplan_uuid = :dialplan_uuid ";
+                                                                                        $sql .= "order by dialplan_detail_order desc limit 1 ";
+                                                                                        $parameters['dialplan_uuid'] = $dialplan_value['dialplan_uuid'];
+                                                                                        $v_dialplan_details_sub = $database->select($sql, $parameters, 'row');
+                                                                                        $y=5;
+                                                                                        if(!empty($v_dialplan_details_sub)){
+                                                                                        $y = $v_dialplan_details_sub['dialplan_detail_order']+5;
+        }
+                                                                                        unset($parameters);
+if(isset($dialplan_value['dialplan_name']) && $dialplan_value['dialplan_name'] == 'user_hold_music'){
+                                                                                        $dialplan_detail_data = 'hold_music=local_stream://${domain_name}/${domain_name}';
+                                                                                        $set ='set';
+}else{
+                                                                                        $dialplan_detail_data = 'hold_music=local_stream://${domain_name}/${domain_name}';
+                                                                                        $set ='export';
+                                                                                        $insert_query = "insert into v_dialplan_details (domain_uuid,dialplan_uuid,dialplan_detail_uuid,dialplan_detail_tag,dialplan_detail_type,dialplan_detail_data,dialplan_detail_inline,dialplan_detail_order,dialplan_detail_group)";
+                                                                                        $insert_query .= "values ('".$v_domains['domain_uuid']."','".$dialplan_value['dialplan_uuid']."','".uuid()."','action','set','".$dialplan_detail_data."','true','".$y."','0')";
+                                                                                        $database->execute($insert_query, null);
+                                                                                        unset($insert_query);
+}
+                                                                                        $insert_query = "insert into v_dialplan_details (domain_uuid,dialplan_uuid,dialplan_detail_uuid,dialplan_detail_tag,dialplan_detail_type,dialplan_detail_data,dialplan_detail_inline,dialplan_detail_order,dialplan_detail_group)";
+                                                                                        $insert_query .= "values ('".$v_domains['domain_uuid']."','".$dialplan_value['dialplan_uuid']."','".uuid()."','action','".$set."','".$dialplan_detail_data."','true','".$y."','0')";
+                                                                                        $database->execute($insert_query, null);
+                                                                                        unset($insert_query);
+                                                                                //update the dialplan xml
+                                                                                        $dialplans = new dialplan;
+                                                                                        $dialplans->source = "details";
+                                                                                        $dialplans->destination = "database";
+                                                                                        $dialplans->uuid = $dialplan_value['dialplan_uuid'];
+                                                                                        $dialplans->xml();
+
+                                                                                }
+                                                                        }
+
+
+                                                                }
+                                                        }
+                                                        $link_path = path_join($_SESSION['switch']['sounds']['dir'], 'music', $stream_name, $stream_name, '8000');
+                                                        if (!is_dir($link_path)) {
+                                                                $link_command = "ln -s ".$stream_path." ".$link_path."";
+                                                                exec($link_command);
+                                                        }
+                                                        $chown_path =path_join($_SESSION['switch']['sounds']['dir'], 'music');
+                                                        $chown_command1 = "cd ".$chown_path." && chown -Rf www-data:www-data ".$stream_name."/";
+                                                        exec($chown_command1);
+//HP:END
+
+	
 							@unlink($stream_file_name_temp);
 						}
 					}
