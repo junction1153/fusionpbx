@@ -400,7 +400,7 @@ $text['description-info']['ru-ru'] = "";
 $text['description-info']['sv-se'] = "Du kan ange en beskrivning här som din egna referens.";
 $text['description-info']['uk-ua'] = "Введіть опис";
 
-$text['description']['en-us'] = "Select the active greeting message to play for extension:";
+$text['description']['en-us'] = "WAV format supported for uploading. Select the active greeting message to play for extension:";
 $text['description']['en-gb'] = "Select the active greeting message to play for extension:";
 $text['description']['ar-eg'] = "";
 $text['description']['de-at'] = "Wählen Sie die aktive Begrüßung aus, welche für diese Nebenstelle abgespielt werden soll:"; //copied from de-de
