@@ -863,7 +863,7 @@ $text['label-voice']['ru-ru'] = "Голос";
 $text['label-voice']['sv-se'] = "Röst";
 $text['label-voice']['uk-ua'] = "Голос";
 
-$text['label-fax']['en-us'] = "Fax";
+$text['label-fax']['en-us'] = "Fax (NOTE: CALL RECORDING WILL DISABLE FOR THIS DID)";
 $text['label-fax']['en-gb'] = "Fax";
 $text['label-fax']['ar-eg'] = "";
 $text['label-fax']['de-at'] = "Fax"; //copied from de-de
