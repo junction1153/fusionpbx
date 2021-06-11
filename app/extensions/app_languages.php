@@ -300,7 +300,7 @@ $text['label-voicemail_password']['ru-ru'] = "Пароль Голосовой П
 $text['label-voicemail_password']['sv-se'] = "Röstbrevlåda Lösenord";
 $text['label-voicemail_password']['uk-ua'] = "Пароль на голосову пошту";
 
-$text['label-voicemail_mail_to']['en-us'] = "Voicemail Mail To";
+$text['label-voicemail_mail_to']['en-us'] = "E-Mail";
 $text['label-voicemail_mail_to']['en-gb'] = "Voicemail Mail To";
 $text['label-voicemail_mail_to']['ar-eg'] = "";
 $text['label-voicemail_mail_to']['de-at'] = "Mailbox Email"; //copied from de-de
