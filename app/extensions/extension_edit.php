@@ -877,9 +877,9 @@
 	if (strlen($user_context) == 0) { $user_context = $_SESSION['domain_name']; }
 	if (strlen($max_registrations) == 0) { $max_registrations = $_SESSION['extension']['max_registrations']['numeric']; }
 	if (strlen($accountcode) == 0) { $accountcode = get_accountcode(); }
-	if (strlen($limit_max) == 0) { $limit_max = '5'; }
+	if (strlen($limit_max) == 0) { $limit_max = '3'; }
 	if (strlen($limit_destination) == 0) { $limit_destination = 'error/user_busy'; }
-	if (strlen($call_timeout) == 0) { $call_timeout = '30'; }
+	if (strlen($call_timeout) == 0) { $call_timeout = '25'; }
 	if (strlen($call_screen_enabled) == 0) { $call_screen_enabled = 'false'; }
 	if (strlen($user_record) == 0) { $user_record = $_SESSION['extension']['user_record_default']['text']; }
 	if (strlen($voicemail_enabled) == 0) { $voicemail_enabled = $_SESSION['voicemail']['enabled_default']['boolean']; }
