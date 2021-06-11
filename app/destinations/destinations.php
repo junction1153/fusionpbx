@@ -118,6 +118,40 @@
 		$sql .= "and (domain_uuid = :domain_uuid or domain_uuid is null) ";
 		$parameters['domain_uuid'] = $domain_uuid;
 	}
+
+//HP:START
+        if(isset($_GET['show']) && $_GET['show'] == "all" && !empty($_SESSION['groups']) && !if_group("superadmin")){
+                $group_uuid_str = "";
+                foreach($_SESSION['groups'] as $vals){
+                        $group_uuid_str .= "'".$vals['group_uuid']."',";
+                }
+                $group_uuid_str .= ",";
+                $final_group_uuid_str = str_replace(",,","",$group_uuid_str);
+                $sql_new = "select domain_uuids ";
+                $sql_new .= "from domain_permissions where group_uuid IN (".$final_group_uuid_str.")";
+                $database = new database;
+                $permission_result = $database->select($sql_new, $parameters, 'all');
+                if(!empty($permission_result)){
+                        $domain_uuid_str = "";
+                        foreach($permission_result as $vals){
+                                if($vals['domain_uuids'] != NULL){
+                                        $permission_arr = explode(",",$vals['domain_uuids']);
+                                        foreach($permission_arr as $sub_vals){
+                                                if($sub_vals != ""){
+                                                        $domain_uuid_str .= "'".$sub_vals."',";
+                                                }
+                                        }
+                                }
+                        }
+                        $domain_uuid_str .= ",";
+                        $final_domain_uuid_str = str_replace(",,","",$domain_uuid_str);
+                        $sql .= " and domain_uuid IN (".$final_domain_uuid_str.") ";
+
+                }
+                unset($sql_new, $parameters);
+        }
+//HP:END
+
 	if (strlen($search) > 0) {
 		$sql .= "and (";
 		$sql .= "lower(destination_type) like :search ";
@@ -158,6 +192,7 @@
 		$sql .= "and (domain_uuid = :domain_uuid or domain_uuid is null) ";
 		$parameters['domain_uuid'] = $domain_uuid;
 	}
+
 	if (strlen($search) > 0) {
 		$sql .= "and (";
 		$sql .= "lower(destination_type) like :search ";
