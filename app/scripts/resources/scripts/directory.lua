@@ -365,17 +365,17 @@
 			--directory[x] = row;
 		--variables
 			effective_caller_id_name = row.effective_caller_id_name;
-			if (row.directory_first_name) then
-				first_name = row.directory_first_name;
-				last_name = row.directory_last_name;
-			else
+--			if (row.directory_first_name) then
+--				first_name = row.directory_first_name;
+--				last_name = row.directory_last_name;
+--			else
 				if (string.len(effective_caller_id_name) > 0) then
 					name = effective_caller_id_name;
 					name_table = explode(" ",name);
 					first_name = name_table[1];
 					last_name = name_table[2];
 				end
-			end
+--			end
 		--get the digits
 			if (first_name) then
 				if (string.len(first_name) > 0) then
