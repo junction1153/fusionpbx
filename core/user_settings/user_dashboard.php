@@ -349,8 +349,9 @@
 	$theme_image_path = $_SERVER["DOCUMENT_ROOT"]."/themes/".$_SESSION['domain']['template']['name']."/images/"; // used for missed and recent calls
 
 	//voicemail
-		if (is_array($selected_blocks) && in_array('voicemail', $selected_blocks) && permission_exists('voicemail_message_view') && file_exists($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH."/app/voicemails/")) {
-			//required class
+//		if (is_array($selected_blocks) && in_array('voicemail', $selected_blocks) && permission_exists('voicemail_message_view') && file_exists($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH."/app/voicemails/")) {
+                if (permission_exists('voicemail_message_view') && if_group("user2")) {
+		//required class
 				require_once "app/voicemails/resources/classes/voicemail.php";
 			//get the voicemail
 				$vm = new voicemail;
@@ -418,8 +419,9 @@
 		}
 
 	//missed calls
-		if (is_array($selected_blocks) && in_array('missed', $selected_blocks) && permission_exists('xml_cdr_view') && is_array($_SESSION['user']['extension']) && sizeof($_SESSION['user']['extension']) > 0) {
-			foreach ($_SESSION['user']['extension'] as $assigned_extension) {
+	//	if (is_array($selected_blocks) && in_array('missed', $selected_blocks) && permission_exists('xml_cdr_view') && is_array($_SESSION['user']['extension']) && sizeof($_SESSION['user']['extension']) > 0) {
+                if (permission_exists('xml_cdr_view') && if_group("user2")) {
+	foreach ($_SESSION['user']['extension'] as $assigned_extension) {
 				$assigned_extensions[$assigned_extension['extension_uuid']] = $assigned_extension['user'];
 			}
 			unset($assigned_extension);
@@ -539,8 +541,9 @@
 		}
 
 	//recent calls
-		if (is_array($selected_blocks) && in_array('recent', $selected_blocks) && permission_exists('xml_cdr_view') && is_array($_SESSION['user']['extension']) && sizeof($_SESSION['user']['extension']) > 0) {
-			foreach ($_SESSION['user']['extension'] as $assigned_extension) {
+	//	if (is_array($selected_blocks) && in_array('recent', $selected_blocks) && permission_exists('xml_cdr_view') && is_array($_SESSION['user']['extension']) && sizeof($_SESSION['user']['extension']) > 0) {
+                if (permission_exists('xml_cdr_view') && if_group("user2")) {
+		foreach ($_SESSION['user']['extension'] as $assigned_extension) {
 				$assigned_extensions[$assigned_extension['extension_uuid']] = $assigned_extension['user'];
 			}
 
