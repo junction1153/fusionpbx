@@ -1,0 +1,1213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ParameterList>
+  {foreach $lines as $row}
+
+<Object>
+<Name>VoiceService.1.X_BT.1.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.X_P2P.1.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.X_FXS.1.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+<Object>
+<Name>DeviceInfo.WAN.</Name>
+<ParameterValueStruct>
+<Name>AddressingType</Name>
+<Value>DHCP</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>DNSServer1</Name>
+<Value>208.67.220.220</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>DNSServer2</Name>
+<Value>4.2.2.2</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.{$row.line_number}.</Name>
+<ParameterValueStruct>
+<Name>Name</Name>
+<Value>VoiceProfile1</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>DTMFMethod</Name>
+<Value>RFC2833</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.Phone.LineKey.1.</Name>
+<ParameterValueStruct>
+<Name>Function</Name>
+<Value>Call Appearance</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Service</Name>
+<Value>SP1</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.{$row.line_number}.SIP.</Name>
+<ParameterValueStruct>
+<Name>ProxyServer</Name>
+<Value>{$row.server_address}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>ProxyServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+      <Name>ProxyServerTransport</Name>
+      {if $row.sip_transport == ''}<Value>TCP</Value>{/if}
+      {if $row.sip_transport == 'tcp'}<Value>TCP</Value>{/if}
+      {if $row.sip_transport == 'udp'}<Value>UDP</Value>{/if}
+      {if $row.sip_transport == 'tls'}<Value>TLS</Value>{/if}
+      {if $row.sip_transport == 'dns srv'}<Value>SRV</Value>{/if}
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>RegistrarServer</Name>
+<Value>{$row.server_address}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>RegistrarServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_UseRefer</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_EchoServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_MWISubscribe</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>RegistrationPeriod</Name>
+<Value>{$row.register_expires}</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.X_FeatureCode.</Name>
+<ParameterValueStruct>
+<Name>CallPickup</Name>
+<Value>*8</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>DirectedCallPickup</Name>
+<Value>*88</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.1.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MWIEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_VMWIEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+
+{if $account.1.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.1.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_DisplayLabel</Name>
+<Value>{$row.display_name}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.SIP.</Name>
+<ParameterValueStruct>
+<Name>AuthUserName</Name>
+<Value>{$row.user_id}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>AuthPassword</Name>
+<Value>{$row.password}</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>URI</Name>
+<Value>{$row.user_id}@{$row.server_address}</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.1.</Name>
+<ParameterValueStruct>
+<Name>Codec</Name>
+<Value>PCMU</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Priority</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.3.</Name>
+<ParameterValueStruct>
+<Name>Codec</Name>
+<Value>G729</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Priority</Name>
+<Value>2</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.4.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.5.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.6.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.7.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.8.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.9.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.{$row.line_number}.Codec.List.10.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.X_FXS.1.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP1 Service</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>DeviceInfo.Time.</Name>
+<ParameterValueStruct>
+<Name>NTPServer1</Name>
+<Value>0.pool.ntp.org</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>NTPServer2</Name>
+<Value>2.pool.ntp.org</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>LocalTimeZone</Name>
+<Value>GMT-05:00(Eastern Time)</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>DaylightSavingTimeEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>DeviceInfo.LAN.</Name>
+<ParameterValueStruct>
+<Name>CurrentRouterIPAddress</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>OperationMode</Name>
+<Value>Bridge</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.2.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Tone.Description.7.</Name>
+<ParameterValueStruct>
+<Name>ToneName</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>TonePattern</Name>
+<Value>350-18,440-18;20;2(.1+.1);()</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>X_DeviceManagement.WebServer.</Name>
+<ParameterValueStruct>
+<Name>AdminPassword</Name>
+<Value>6609962</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>X_DeviceManagement.IVR.Password.</Name>
+<ParameterValueStruct>
+<Name>AdminPassword</Name>
+<Value>6609962</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>X_DeviceManagement.FirmwareUpdate.</Name>
+<ParameterValueStruct>
+<Name>Method</Name>
+<Value>Periodically</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Interval</Name>
+<Value>259200</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>FirmwareURL</Name>
+<Value>http://app.pbx02.jcnt.net/resources/templates/provision/firmware/obihai/obi2xx3xx-latest.fw</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>X_DeviceManagement.ITSPProvisioning.</Name>
+<ParameterValueStruct>
+<Name>Method</Name>
+<Value>Periodically</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Interval</Name>
+<Value>259200</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.2.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+<Object>
+<Name>VoiceService.1.X_FXS.2.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP2 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.2.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.2.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.2.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph2</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.3.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.3.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+
+<Object>
+<Name>VoiceService.1.X_FXS.3.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP3 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.3.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.3.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.3.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph3</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.4.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.4.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+
+<Object>
+<Name>VoiceService.1.X_FXS.4.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP4 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.4.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.4.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.4.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph4</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.5.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|98S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.5.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+
+<Object>
+<Name>VoiceService.1.X_FXS.5.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP5 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.5.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.5.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.5.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph5</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.6.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.6.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+
+<Object>
+<Name>VoiceService.1.X_FXS.6.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP6 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.6.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.6.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.6.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph6</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.7.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.7.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+
+<Object>
+<Name>VoiceService.1.X_FXS.7.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP7 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.7.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.7.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.7.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph7</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.8.</Name>
+<ParameterValueStruct>
+<Name>DigitMap</Name>
+<Value>([2-9]11S0|988S0|[2-9]xxxxxxxxx|1xxxxxxxxxx|011x.S5|**x.S3|*x.S3)</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.X_FXS.8.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>StarCodeProfile</Name>
+<Value>None</Value>
+</ParameterValueStruct>
+</Object>
+<ParameterValueStruct>
+<Name>CallWaitingEnable</Name>
+<Value>false</Value>
+</ParameterValueStruct>
+
+<Object>
+<Name>VoiceService.1.X_FXS.8.</Name>
+<ParameterValueStruct>
+<Name>PrimaryLine</Name>
+<Value>SP8 Service</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.8.CallingFeatures.</Name>
+<ParameterValueStruct>
+<Name>MaxSessions</Name>
+<Value>1</Value>
+</ParameterValueStruct>
+  
+{if $account.8.sip_transport == 'tls'}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Use SRTP Only</Value>
+    </ParameterValueStruct>
+
+    <ParameterValueStruct>
+      <Name>X_SRTPCryptos</Name>
+      <Value>AES_CM_128_HMAC_SHA1_80</Value>
+    </ParameterValueStruct>
+{else}
+    <ParameterValueStruct>
+      <Name>X_SRTP</Name>
+      <Value>Disable SRTP</Value>
+    </ParameterValueStruct>
+{/if}
+
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.8.</Name>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_ServProvProfile</Name>
+<Value>A</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RingProfile</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_CodecProfile</Name>
+<Value>B</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_InboundCallRoute</Name>
+<Value>ph8</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_RegisterEnable</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_AcceptSipFromRegistrarOnly</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_NoRegNoCall</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveEnable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveExpires</Name>
+<Value>25</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServer</Name>
+<Value/>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>X_KeepAliveServerPort</Name>
+<Value>{$row.sip_port}</Value>
+</ParameterValueStruct>
+</Object>
+
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.2.Codec.X_FAX.</Name>
+<ParameterValueStruct>
+<Name>Codec</Name>
+<Value>fax-event</Value>
+</ParameterValueStruct>
+<ParameterValueStruct>
+<Name>Enable</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+</Object>
+<Object>
+<Name>VoiceService.1.VoiceProfile.1.Line.2.Codec.X_Settings.</Name>
+<ParameterValueStruct>
+<Name>T38ECM</Name>
+<Value>true</Value>
+</ParameterValueStruct>
+</Object>
+
+
+
+        <Object>
+    <Name>X_DeviceManagement.ITSPProvisioning.</Name>
+    <ParameterValueStruct>
+      <Name>Method</Name>
+      <Value>Periodically</Value>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>Interval</Name>
+      <Value>259200</Value>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>TimeofDay</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>ConfigURL</Name>
+      <Value>http://{$http_auth_username}:{$http_auth_password}@{$domain_name}:12480/app/provision/?mac=$mac</Value>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>DnsLookupType</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>DnsSrvPrefix</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>Override</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM0</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM1</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM2</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM3</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM4</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM5</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM6</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>GPRM7</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>TPRM0</Name>
+      <Value>1</Value>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>TPRM1</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>TPRM2</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+    <ParameterValueStruct>
+      <Name>TPRM3</Name>
+      <Value X_UseDefault="Yes"/>
+    </ParameterValueStruct>
+  </Object>
+  {/foreach}
+
+</ParameterList>
+

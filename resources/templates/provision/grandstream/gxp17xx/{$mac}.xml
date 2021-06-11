@@ -771,33 +771,41 @@
 <!-- # String -->
 <P270>{$account.1.display_name}</P270>
 
+
+
+
+
+{if $account.1.sip_transport == 'udp' && $custom_sip_port == ''}{$c_sip_port_A=$account.1.sip_port}{$c_sip_port_B='5184'}{else}{if $account.1.sip_transport == 'udp'}{$c_sip_port_A={$custom_sip_port}}{$c_sip_port_B={$custom_sip_port}}{/if}{/if}
+{if $account.1.sip_transport == 'tcp' && $custom_sip_port == ''}{$c_sip_port_A=$account.1.sip_port}{$c_sip_port_B='5184'}{else}{if $account.1.sip_transport == 'tcp'}{$c_sip_port_A={$custom_sip_port}}{$c_sip_port_B={$custom_sip_port}}{/if}{/if}
+{if $account.1.sip_transport == 'tls' && $custom_sip_port_tls == ''}{$c_sip_port_A=$account.1.sip_port}{$c_sip_port_B='5185'}{else}{if $account.1.sip_transport == 'tls'}{$c_sip_port_A={$custom_sip_port_tls}}{$c_sip_port_B={$custom_sip_port_tls}}{/if}{/if}
+
+
+{if {$account.1.server_address|strstr:"pbx02.jcnt.net"}}{$c_sip_server_1_primary="pbx02.static.jcnt.net"}{/if}
+{if {$account.1.server_address|strstr:"pbx03.jcnt.net"}}{$c_sip_server_1_primary="pbx03.static.jcnt.net"}{/if}
+
 <!-- # SIP Server -->
 <!-- # String -->
-{if $account.1.sip_transport != 'dns srv'}
+<!-- P47>{$c_sip_server_1_primary}{if isset($account.1.server_address)}:{/if}{$c_sip_port_A}</P47 -->
 <P47>{$account.1.server_address}:{$account.1.sip_port}</P47>
-{else}
-<P47>{$account.1.server_address}</P47>
-{/if}
+
+
+{if {$account.1.server_address|strstr:"pbx02.jcnt.net"}}{$c_sip_server_1_secondary="pbx03.static.jcnt.net"}{/if}
+{if {$account.1.server_address|strstr:"pbx03.jcnt.net"}}{$c_sip_server_1_secondary="pbx02.static.jcnt.net"}{/if}
 
 <!-- # Secondary SIP Server -->
 <!-- # String -->
-<P2312></P2312>
+<!-- P2312>{$c_sip_server_1_secondary}{if isset($account.1.server_address)}:{/if}{$c_sip_port_B}</P2312-->
+<P2312> </P2312>
+
+
 
 <!-- # Outbound Proxy -->
 <!-- # String -->
-{if $account.1.sip_transport != 'dns srv' && isset($account.1.outbound_proxy_primary)}
-<P48>{$account.1.outbound_proxy_primary}:{$account.1.sip_port}</P48>
-{else}
 <P48></P48>
-{/if}	 
 
 <!-- # Backup Outbound Proxy -->
 <!-- # String -->
-{if $account.1.sip_transport != 'dns srv' && isset($account.1.outbound_proxy_secondary)}
-<P2333>{$account.1.outbound_proxy_secondary}:{$account.1.sip_port}</P2333>
-{else}
 <P2333></P2333>
-{/if}	
 
 <!-- # BLF Server -->
 <!-- # String -->
@@ -805,7 +813,8 @@
 
 <!-- # SIP User ID -->
 <!-- # String -->
-<P35>{$account.1.user_id}</P35>
+<!-- P35>{$user_id_1}{if isset($account.1.server_address)}@{/if}{$account.1.server_address}</P35 -->
+<P35>{$user_id_1}</P35>
 
 <!-- # Authenticate ID -->
 <!-- # String -->
@@ -821,18 +830,14 @@
 
 <!-- # Voice Mail UserID -->
 <!-- # String -->
-<P33>{$voicemail_number}</P33>
+<P33>*97</P33>
 <!-- ############################################################### -->
 <!-- # Account 1/Network Settings -->
 <!-- ############################################################### -->
 <!-- # DNS Mode. 0 - A Record, 1 - SRV, 2 - NAPTR/SRV, 3 - Use Configured IP. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_dns_mode)}
-<P103>{$grandstream_dns_mode}</P103>
-{else}
 <P103>0</P103>
-{/if}
 
 <!-- # Primary IP. Maximum 15 characters -->
 <!-- # String -->
@@ -849,11 +854,7 @@
 <!-- # NAT Traversal. 0 - No, 1 - STUN, 2 - keep alive, 3 - UPnP, 4 - Auto, 5 - VPN. Default is 0. -->
 <!-- # Number: 0, 1, 2, 3, 4, 5 -->
 <!-- # Mandatory -->
-{if isset($grandstream_nat_traversal)}
-<P52>{$grandstream_nat_traversal}</P52>
-{else}
-<P52>0</P52>
-{/if}
+<P52>2</P52>
 
 <!-- # Proxy-Require (A SIP extension to enable firewall penetration). Max length is 64 characters -->
 <!-- # String -->
@@ -874,14 +875,14 @@
 <!-- # Unregister On Reboot. 0 - No, 1 - Yes, 2 - Instance. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P81>0</P81>
+<P81>1</P81>
 
 <!-- # Register Expiration (in minutes). Default is 60. Max about 45 days -->
 <!-- # Number: 1 - 64800 -->
 <!-- # Mandatory -->
-<P32>{$account.1.register_expires}</P32>
+<P32>{$grandstream_register_expires_1}</P32>
 
-<!-- # Subscribe Expiration. Default is 60.  -->
+<!-- # Subscribe Expiration. Default is 60. -->
 <!-- # Number: 1-64800  -->
 <!-- # Mandatory -->
 <P26051>60</P26051>
@@ -894,7 +895,7 @@
 <!-- # Enable OPTIONS Keep Alive. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P2397>0</P2397>
+<P2397>1</P2397>
 
 <!-- # OPTIONS Keep Alive Interval. Default is 30. -->
 <!-- # Number -->
@@ -909,7 +910,7 @@
 <!-- # Local SIP Port. Default is 5060 -->
 <!-- # Number -->
 <!-- # Mandatory -->
-<P40>5060</P40>
+<P40>5180</P40>
 
 <!-- # SIP Registration Failure Retry Wait Time (in seconds). Default is 20 -->
 <!-- # Number: 1 - 3600 -->
@@ -932,16 +933,16 @@
 <!-- # Number: 0, 1, 2 -->
 <!-- # Mandatory -->
 {$tp=0}
-{if $account.1.sip_transport == 'udp'}{$tp=0}{/if}
-{if $account.1.sip_transport == 'tcp'}{$tp=1}{/if}
-{if $account.1.sip_transport == 'tls'}{$tp=2}{/if}
-{if $account.1.sip_transport == 'dns srv'}{$tp=1}{/if}
+{if $sip_transport_1 == 'udp'}{$tp=0}{/if}
+{if $sip_transport_1 == 'tcp'}{$tp=1}{/if}
+{if $sip_transport_1 == 'tls'}{$tp=2}{/if}
+{if $sip_transport_1 == 'dns srv'}{$tp=1}{/if}
 <P130>{$tp}</P130>
 
 <!-- # SIP URI Scheme when using TLS. 0 - sip, 1 - sips. Default is 1 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P2329>1</P2329>
+<P2329>2</P2329>
 
 <!-- # Use Actual Ephemeral Port in Contact with TCP/TLS. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
@@ -961,12 +962,7 @@
 <!-- # SUBSCRIBE for MWI. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($subscribe_mwi)}
 <P99>1</P99>
-{else}
-<P99>0</P99>
-{/if}
-
 
 <!-- # SUBSCRIBE for Registration. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
@@ -1007,7 +1003,7 @@
 <!-- # Use X-Grandstream-PBX Header. Default is 1. -->
 <!-- # Number 0, 1 -->
 <!-- # Mandatory -->
-<P26054>1</P26054>
+<!-- P26054>1</P26054-->
 
 <!-- # Use P-Access-Network-Info Header. 0 - No, 1 - Yes. Default is 1. -->
 <!-- # Number 0, 1 -->
@@ -1017,7 +1013,7 @@
 <!-- # Use P-Emergency-Info Header. 0 - No, 1 - Yes. Default is 1. -->
 <!-- # Number 0, 1 -->
 <!-- # Mandatory -->
-<P26059>1</P26059>
+<!-- P26059>1</P26059 -->
 
 <!-- ############################################################### -->
 <!-- # Account 1/SIP Settings/Advanced Features -->
@@ -1034,11 +1030,11 @@
 <!-- #Auto Provision Eventlist BLFs. 0-Disabled, 1-Enabled. Default is 0 -->
 <!-- #Number:0,1 -->
 <!-- #Mandatory -->
-<P2389>0</P2389>
+<!-- P2389>0</P2389 -->
 
 <!-- # Conference URI -->
 <!-- # String -->
-<P2318>{if $nway_conference == true}nway{$account.1.user_id}@{$account.1.server_address}{/if}</P2318>
+<!-- P2318></P2318 -->
 
 <!-- # Music On Hold URI -->
 <!-- # String -->
@@ -1047,9 +1043,7 @@
 <!-- # Force BLF Call-pickup by prefix. 0 - Disable, 1 - Enable. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($grandstream_blf_call_pickup)}
-<P6752>{$grandstream_blf_call_pickup}</P6752>
-{/if}
+<P6752>0</P6752>
 
 <!-- # BLF Call-pickup Prefix. Default is ** -->
 <!-- # String -->
@@ -1108,7 +1102,7 @@
 <!-- # Enable Session Timer. 0 - No, 1 - Yes. Default is 1 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P2395>1</P2395>
+<P2395>0</P2395>
 
 <!-- # Session Expiration (in seconds). Default is 180 -->
 <!-- # Number: 90 - 64800 -->
@@ -1178,7 +1172,7 @@
 <!-- # Accept Incoming SIP from Proxy Only. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P2347>1</P2347>
+<P2347>0</P2347>
 
 <!-- # Authenticate Incoming INVITE. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
@@ -1249,11 +1243,8 @@
 <!-- # SRTP Mode. 0 - Disabled, 1 - Enabled but not forced, 2 - Enabled and forced, 3 - Optional. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_srtp)}
-<P183>{$grandstream_srtp}</P183>
-{else}
-<P183>0</P183>
-{/if}
+
+{if $account.1.sip_transport == 'tls'}<P183>1</P183>{else}<P183>0</P183>{/if}
 
 <!-- # Crypto Life Time -->
 <!-- # 0 - No, 1 - Yes. Default is 0 -->
@@ -1312,6 +1303,10 @@
 <!-- # Mandatory -->
 <P2385>123</P2385>
 
+<!-- # Screen Saver -->
+<P2918>0</P2918>
+
+
 <!-- # DTMF Payload Type. Default is 101 -->
 <!-- # Number: 96 - 127 -->
 <!-- # Mandatory -->
@@ -1350,7 +1345,7 @@
 {if isset($grandstream_dial_plan) }
 <P290>{$grandstream_dial_plan}</P290>
 {else}
-<P290>{literal}{x+|*x+|*++|\p\a\r\k\+*x+|\p\a\r\k\+x+|\f\l\o\w\+*x+}{/literal}</P290>
+<P290>{literal}{x+|*x+|*++|\p\a\r\k\+*x+| \f\l\o\w\+*x+}{/literal}</P290>
 {/if}
 
 <!-- # Call Log. 0 - Log All Calls, 1 - Log Incoming/Outgoing only (missed calls NOT recorded), 2 - Disable Call Log. Default is 0 -->
@@ -1361,37 +1356,37 @@
 <!-- # Account Ring Tone. 0 - system ring tone, 1 - custom ring tone 1, 2 - custom ring tone 2, 3 - custom ring tone. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-<P104>0	</P104>
+<!-- P104>0	</P104 -->
 
 <!-- # Matching Incoming Caller ID. Matching Rule 1 -->
 <!-- # String -->
-<P1488>{$grandstream_distinctive_ringtone_name_1}</P1488>
+<P1488></P1488>
 
 <!-- # Matching Rule 1 Distinctive Ringtone -->
 <!-- # 0 - system ring tone, 1 - custom ring tone 1, 2 - custom ring tone 2, 3 - custom ring tone 3. Default is 0. -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-<P1489>{$grandstream_distinctive_ringtone_1}</P1489>
+<P1489>0</P1489>
 
 <!-- # Matching Incoming Caller ID. Matching Rule 2 -->
 <!-- # String -->
-<P1490>{$grandstream_distinctive_ringtone_name_2}</P1490>
+<P1490></P1490>
 
 <!-- # Matching Rule 2 Distinctive Ringtone -->
 <!-- # 0 - system ring tone, 1 - custom ring tone 1, 2 - custom ring tone 2, 3 - custom ring tone 3. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-<P1491>{$grandstream_distinctive_ringtone_2}</P1491>
+<P1491>0</P1491>
 
 <!-- # Matching Incoming Caller ID. Matching Rule 3 -->
 <!-- # String -->
-<P1492>{$grandstream_distinctive_ringtone_name_3}</P1492>
+<P1492></P1492>
 
 <!-- # Matching Rule 3 Distinctive Ringtone -->
 <!-- # 0 - system ring tone, 1 - custom ring tone 1, 2 - custom ring tone 2, 3 - custom ring tone 3. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-<P1493>{$grandstream_distinctive_ringtone_3}</P1493>
+<P1493>0</P1493>
 
 <!-- # Ring Timeout (in seconds). Default is 60 -->
 <!-- # Number: 30 - 3600 -->
@@ -1416,7 +1411,7 @@
 <!-- # Allow Auto Answer by Call-Info. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P298>0</P298>
+<P298>1</P298>
 
 <!-- # Allow Barging by Call-Info. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
@@ -1484,15 +1479,11 @@
 
 <!-- # Account Name -->
 <!-- # String -->
-<P417>{$account.2.display_name}</P417>
+<P417>{$display_name_2}</P417>
 
 <!-- # SIP Server -->
 <!-- # String -->
-{if $account.2.sip_transport != 'dns srv'}
-<P402>{$account.2.server_address}:{$account.2.sip_port}</P402>
-{else}
-<P402>{$account.2.server_address}</P402>
-{/if}
+<P402>{$server_address_2}</P402>
 
 <!-- # Secondary SIP Server -->
 <!-- # String -->
@@ -1500,19 +1491,11 @@
 
 <!-- # Outbound Proxy -->
 <!-- # String -->
-{if $account.2.sip_transport != 'dns srv' && isset($account.2.outbound_proxy_primary)}
-<P403>{$account.2.outbound_proxy_primary}:{$account.2.sip_port}</P403>
-{else}
 <P403></P403>
-{/if}  
 
 <!-- # Backup Outbound Proxy -->
 <!-- # String -->
-{if $account.2.sip_transport != 'dns srv' && isset($account.2.outbound_proxy_secondary)}
-<P2433>{$account.2.outbound_proxy_secondary}:{$account.2.sip_port}</P2433>
-{else}
 <P2433></P2433>
-{/if}
 
 <!-- # BLF Server -->
 <!-- # String -->
@@ -1520,7 +1503,7 @@
 
 <!-- # SIP User ID -->
 <!-- # String -->
-<P404></P404>
+<P404>{$account.2.user_id}</P404>
 
 <!-- # Authenticate ID -->
 <!-- # String -->
@@ -1536,18 +1519,14 @@
 
 <!-- # Voice Mail UserID -->
 <!-- # String -->
-<P426>{$voicemail_number}</P426>
+<P426>*97</P426>
 <!-- ############################################################### -->
 <!-- # Account 2/Network Settings -->
 <!-- ############################################################### -->
 <!-- # DNS Mode. 0 - A Record, 1 - SRV, 2 - NAPTR/SRV, 3 - Use Configured IP. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_dns_mode)}
-<P408>{$grandstream_dns_mode}</P408>
-{else}
 <P408>0</P408>
-{/if}
 
 <!-- # Primary IP. Maximum 15 characters -->
 <!-- # String -->
@@ -1564,11 +1543,7 @@
 <!-- # NAT Traversal. 0 - No, 1 - STUN, 2 - keep alive, 3 - UPnP, 4 - Auto, 5 - VPN. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3, 4, 5 -->
 <!-- # Mandatory -->
-{if isset($grandstream_nat_traversal)}
-<P414>{$grandstream_nat_traversal}</P414>
-{else}
 <P414>0</P414>
-{/if}
 
 <!-- # Proxy-Require (A SIP extension to enable firewall penetration). Max length is 64 characters -->
 <!-- # String -->
@@ -1594,7 +1569,7 @@
 <!-- # Register Expiration (in minutes). Default is 60. Max is 45 days -->
 <!-- # Number: 1 - 64800 -->
 <!-- # Mandatory -->
-<P412>{$account.2.register_expires}</P412>
+<P412>{$grandstream_register_expires_2}</P412>
 
 <!-- # Subscribe Expiration. Default is 60.  -->
 <!-- # Number: 1-64800  -->
@@ -1646,12 +1621,7 @@
 <!-- # SIP Transport. 0 - UDP, 1 - TCP, 2 - TCP/TLS. Default is 0 -->
 <!-- # Number: 0, 1, 2 -->
 <!-- # Mandatory -->
-{$tp=0}
-{if $account.2.sip_transport == 'udp'}{$tp=0}{/if}
-{if $account.2.sip_transport == 'tcp'}{$tp=1}{/if}
-{if $account.2.sip_transport == 'tls'}{$tp=2}{/if}
-{if $account.2.sip_transport == 'dns srv'}{$tp=1}{/if}
-<P448>{$tp}</P448>
+<P448>0</P448>
 
 <!-- # SIP URI Scheme when using TLS. 0 - sip, 1 - sips. Default is 1 -->
 <!-- # Number: 0, 1 -->
@@ -1676,12 +1646,7 @@
 <!-- # SUBSCRIBE for MWI (Whether or not send SUBSCRIBE for Message Waiting Indication). 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($subscribe_mwi)}
-<P415>1</P415>
-{else}
 <P415>0</P415>
-{/if}
-
 
 <!-- # SUBSCRIBE for Registration. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
@@ -1753,7 +1718,7 @@
 
 <!-- # Conference URI -->
 <!-- # String -->
-<P2418>{if $nway_conference == true}nway{$account.2.user_id}@{$account.2.server_address}{/if}</P2418>
+<P2418></P2418>
 
 <!-- # Music On Hold URI -->
 <!-- # String -->
@@ -1762,9 +1727,7 @@
 <!-- # Force BLF Call-pickup by prefix. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($grandstream_blf_call_pickup)}
-<P6753>{$grandstream_blf_call_pickup}</P6753>
-{/if}
+<P6753>0</P6753>
 
 <!-- # BLF Call-pickup Prefix. Default is ** -->
 <!-- # String -->
@@ -1963,11 +1926,7 @@
 <!-- # 0 - Disabled, 1 - Enabled but not forced, 2 - Enabled and forced, 3 - Optional. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_srtp)}
-<P443>{$grandstream_srtp}</P443>
-{else}
 <P443>0</P443>
-{/if}
 
 <!-- #Crypto Life Time -->
 <!-- #0 - No, 1 - Yes. Default is 0 -->
@@ -2192,11 +2151,7 @@
 
 <!-- # SIP Server -->
 <!-- # String -->
-{if $account.3.sip_transport != 'dns srv'}
-<P502>{$account.3.server_address}:{$account.3.sip_port}</P502>
-{else}
 <P502>{$account.3.server_address}</P502>
-{/if}
 
 <!-- # Secondary SIP Server -->
 <!-- # String -->
@@ -2204,19 +2159,11 @@
 
 <!-- # Outbound Proxy -->
 <!-- # String -->
-{if $account.3.sip_transport != 'dns srv' && isset($account.3.outbound_proxy_primary)}
-<P503>{$account.3.outbound_proxy_primary}:{$account.3.sip_port}</P503>
-{else}
 <P503></P503>
-{/if}  
 
 <!-- # Backup Outbound Proxy -->
 <!-- # String -->
-{if $account.3.sip_transport != 'dns srv' && isset($account.3.outbound_proxy_secondary)}
-<P2533>{$account.3.outbound_proxy_secondary}:{$account.3.sip_port}</P2533>
-{else}
 <P2533></P2533>
-{/if}
 
 <!-- # BLF Server -->
 <!-- # String -->
@@ -2240,18 +2187,14 @@
 <!-- 	 -->
 <!-- # Voice Mail UserID -->
 <!-- # String -->
-<P526>{$voicemail_number}</P526>
+<P526>*97</P526>
 <!-- ############################################################### -->
 <!-- # Account 3/Network Settings -->
 <!-- ############################################################### -->
 <!-- # DNS Mode. 0 - A Record, 1 - SRV, 2 - NAPTR/SRV, 3 - Use Configured IP. Default is 0  -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_dns_mode)}
-<P508>{$grandstream_dns_mode}</P508>
-{else}
 <P508>0</P508>
-{/if}
 
 <!-- # Primary IP. Maximum 15 characters -->
 <!-- # String -->
@@ -2268,11 +2211,7 @@
 <!-- # NAT Traversal. 0 - No, 1 - STUN, 2 - keep alive, 3 - UPnP, 4 - Auto, 5 - VPN. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3, 4, 5 -->
 <!-- # Mandatory -->
-{if isset($grandstream_nat_traversal)}
-<P514>{$grandstream_nat_traversal}</P514>
-{else}
 <P514>0</P514>
-{/if}
 
 <!-- # Proxy-Require (A SIP extension to enable firewall penetration). Max length is 64 characters -->
 <!-- # String -->
@@ -2350,12 +2289,7 @@
 <!-- # SIP Transport. 0 - UDP, 1 - TCP. 2- TCP/TLS. Default is 0 -->
 <!-- # Number: 0, 1, 2 -->
 <!-- # Mandatory -->
-{$tp=0}
-{if $account.3.sip_transport == 'udp'}{$tp=0}{/if}
-{if $account.3.sip_transport == 'tcp'}{$tp=1}{/if}
-{if $account.3.sip_transport == 'tls'}{$tp=2}{/if}
-{if $account.3.sip_transport == 'dns srv'}{$tp=1}{/if}
-<P548>{$tp}</P548>
+<P548>0</P548>
 
 <!-- # SIP URI Scheme When Using TLS. 0 - sip, 1 - sips. Default is 1 -->
 <!-- # Number: 0, 1 -->
@@ -2380,12 +2314,7 @@
 <!-- # SUBSCRIBE for MWI (Whether or not send SUBSCRIBE for Message Waiting Indication). 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($subscribe_mwi)}
-<P515>1</P515>
-{else}
 <P515>0</P515>
-{/if}
-
 
 <!-- # SUBSCRIBE for Registration. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
@@ -2457,7 +2386,7 @@
 
 <!-- # Conference URI -->
 <!-- # String -->
-<P2518>{if $nway_conference == true}nway{$account.3.user_id}@{$account.3.server_address}{/if}</P2518>
+<P2518></P2518>
 
 <!-- # Music On Hold URI -->
 <!-- # String -->
@@ -2466,9 +2395,7 @@
 <!-- # Force BLF Call-pickup by prefix. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($grandstream_blf_call_pickup)}
-<P6754>{$grandstream_blf_call_pickup}</P6754>
-{/if}
+<P6754>0</P6754>
 
 <!-- # BLF Call-pickup Prefix. Default is ** -->
 <!-- # String -->
@@ -2666,11 +2593,7 @@
 <!-- # 0 - Disabled, 1 - Enabled but not forced, 2 - Enabled and forced, 3 - Optional. Default is 0 -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_srtp)}
-<P543>{$grandstream_srtp}</P543>
-{else}
 <P543>0</P543>
-{/if}
 
 <!-- # Crypto Life Time -->
 <!-- # 0 - No, 1 - Yes. Default is 0 -->
@@ -2776,7 +2699,7 @@
 
 <!-- # Matching Incoming Caller ID. Matching Rule 1 -->
 <!-- # String -->
-<P1500>{$grandstream_distinctive_ringtone_name_1}</P1500>
+<P1500></P1500>
 
 <!-- # Matching Rule 1 Distinctive Ringtone -->
 <!-- # 0 - system ring tone, 1 - custom ring tone 1, 2 - custom ring tone 2, 3 - custom ring tone 3. Default is 0 -->
@@ -3556,7 +3479,7 @@
 <!-- # Use Random Port. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P78>0</P78>
+<P78>1</P78>
 
 <!-- # Keep-Alive Interval (in seconds). Default is 20 -->
 <!-- # Number: 10 - 160 -->
@@ -3810,142 +3733,11 @@
 <!-- # String -->
 <P1588></P1588>
 <!-- ############################################################################## -->
-<!-- ##  Settings/Ring Tone -->
-<!-- ############################################################################## -->
-<!-- ### Call Progress Tones ### -->
-<!-- # Syntax: f1=val,f2=val[,c=on1/off1[-on2/off2[-on3/off3]]];  -->
-<!-- # (Frequencies are in Hz and cadence on and off are in 10ms)  -->
-
-<!-- # System Ring Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P345>f1=440,f2=480,c=200/400;</P345>
-
-<!-- # Dial Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P343>f1=350,f2=440;</P343>
-
-<!-- # Second Dial Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P2909>f1=350,f2=440;</P2909>
-
-<!-- # Message Waiting Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P344>f1=350,f2=440,c=10/10;</P344>
-
-<!-- # Ring Back Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P346>f1=440,f2=480,c=200/400;</P346>
-
-<!-- # Call-Waiting Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P347>f1=440,f2=440,c=25/525;</P347>
-
-<!-- # Call-Waiting Tone Gain. 0 - Low, 1 - Medium, 2 - High. Default is 0 -->
-<!-- # Number: 0, 1, 2 -->
-<!-- # Mandatory -->
-<P1555>0</P1555>
-
-<!-- # Busy Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P348>f1=480,f2=620,c=50/50;</P348>
-
-<!-- # Reorder Tone -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P349>f1=480,f2=620,c=25/25;</P349>
-
-<!-- # Speaker Ring Volume -->
-<!-- # Number: 0-7. Default is 7. -->
-<!-- # Mandatory -->
-<P8352>7</P8352>
-<!-- ############################################################################## -->
-<!-- ##  Settings/Audio Control -->
-<!-- ############################################################################## -->
-<!-- # HEADSET Key Mode. 0 - Default Mode, 1 - Toggle Headset/Speaker. Default is 0 -->
-<!-- # Number: 0, 1 -->
-<!-- # Mandatory -->
-{if isset($grandstream_headset_key_mode)}
-    <P1312>{$grandstream_headset_key_mode}</P1312>
-{/if}
-
-    <!-- # Headset Type. 0 - Normal, 1 - Plantronics EHS. Default is 0 -->
-    <!-- # Number: 0, 1 -->
-    <!-- # Mandatory -->
-{if isset($grandstream_headset_type)}
-    <P6779>{$grandstream_headset_type}</P6779>
-
-    <!-- # EHS Headset Ring Tone. 0 - Normal, 1 - Plantronics EHS. Default is 0 -->
-    <!-- # Number: 0, 1 -->
-    <!-- # Mandatory -->
-    <P1487>{$grandstream_headset_type}</P1487>
-{/if}
-
-<!-- # Always Ring Speaker. 0 - No, 1 - Yes. Default is 0 -->
-<!-- # Number: 0, 1 -->
-<!-- # Mandatory -->
-{if isset($grandstream_headset_ring)}
-<P1439>{$grandstream_headset_ring}</P1439>
-{/if}
-
-<!-- # Headset TX gain(db). 1 - -6, 0 - 0, 2 - +6, 3 - -9, 4 - +9, 5 - -12, 6 - -15. Default is 0 -->
-<!-- # Number: 0, 1, 2, 3, 4, 5, 6 -->
-<!-- # Mandatory -->
-{if isset($grandstream_headset_tx_gain)}
-<P1301>{$grandstream_headset_tx_gain}</P1301>
-{else}
-<P1301>0</P1301>
-{/if}
-
-<!-- # Headset RX gain(db). 1 - -6, 0 - 0, 2 - +6. Default is 0 -->
-<!-- # Number: 0, 1, 2 -->
-<!-- # Mandatory -->
-{if isset($grandstream_headset_rx_gain)}
-<P1302>{$grandstream_headset_rx_gain}</P1302>
-{else}
-<P1302>0</P1302>
-{/if}
-
-<!-- # Handset TX gain(db). 1 - -6, 0 - 0, 2 - +6. Default is 0 -->
-<!-- # Number: 0, 1, 2 -->
-<!-- # Mandatory -->
-<P1464>0</P1464>
-<!-- ############################################################################## -->
-<!-- ##  Settings/LCD Display -->
-<!-- ############################################################################## -->
-<!-- # Backlight Brightness. -->
-<!-- # Active. Default is 6. -->
-<!-- # Number -->
-<!-- # Mandatory -->
-<P334>6</P334>
-
-<!-- # Backlight Brightness. -->
-<!-- # Idle. Default is 2. -->
-<!-- # Number -->
-<!-- # Mandatory -->
-<P335>2</P335>
-
-<!-- # Disable Missed Call Backlight. 0 - No, 1 - Yes. Default is 0 -->
-<!-- # Number: 0, 1 -->
-<!-- # Mandatory -->
-<P351>0</P351>
-
-<!-- # Softkeys -->
-<!-- # Hide System Softkey on Main Page. Next, History, ForwardAll, Redial. -->
-<!-- # String -->
-<P8348></P8348>
-<!-- ############################################################################## -->
 <!-- ##  Settings/Date and Time -->
 <!-- ############################################################################## -->
 <!-- # NTP Server -->
 <!-- # String -->
-<P30>us.pool.ntp.org</P30>
+<P30>pool.ntp.org</P30>
 
 <!-- # NTP Update Interval -->
 <!-- # String -->
@@ -3956,7 +3748,7 @@
 <!-- # When set to Yes(1), it will override the configured NTP server -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-<P144>1</P144>
+<P144>0</P144>
 
 <!-- # Time Zone -->
 <!-- # P value                                                                                         Web GUI Option  -->
@@ -4022,18 +3814,8 @@
 
 <!-- # String -->
 <!-- # Mandatory -->
-<P64>auto</P64>
+<P64>{$grandstream_timezone}</P64>
 
-<!-- # Allow DHCP Option 2 to override Time Zone setting. 0 - No, 1 - Yes. Default is 1 -->
-<!-- # When set to Yes(1), it will override the configured Time Zone setting if available  -->
-<!-- # Number: 0, 1 -->
-<!-- # Mandatory -->
-<P143>1</P143>
-
-<!-- # Self Defined Time zone. Max length allowed is 64 characters -->
-<!-- # String -->
-<!-- # Mandatory -->
-<P246>MTZ+6MDT+5,M4.1.0,M11.1.0</P246>
 
 <!-- # Date Display Format -->
 <!-- # 0: yyyy-mm-dd      eg. 2011-10-31 -->
@@ -4043,7 +3825,7 @@
 <!-- # 4: MMMM dd, dddd   eg. October 31, Monday -->
 <!-- # Number: 0, 1, 2, 3, 4 -->
 <!-- # Mandatory -->
-<P102>0</P102>
+<P102>1</P102>
 
 <!-- # Time Display Format. 0 - 12 Hour, 1 - 24 Hour -->
 <!-- # Number: 0, 1 -->
@@ -4085,7 +3867,15 @@
 <!-- # Account Mode. 0 - Line Mode, 1 - Account Mode. Default is 0. -->
 <!-- # Number 0, 1  -->
 <!-- # Mandatory -->
-<P8369>0</P8369>
+<P8369>1</P8369>
+<P1364>0</P1364>
+<P1366>0</P1366>
+<P1368>0</P1368>
+<P1365>0</P1365>
+<P1367>0</P1367>
+<P8390>0</P8390>
+
+
 
 <!-- ###################################################################################### -->
 <!-- # Virtual Multi-Purpose Keys (VPKs) -->
@@ -5820,7 +5610,7 @@
 <!-- # Internet Protocol. 0 - Both IPv4 and IPv6, 1 - Both, prefer IPv6 , 2 - IPv4 Only, 3 - IPv6 Only. Default is 2. -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-{if isset($grandstream_ipv_mode)}<P1415>{$grandstream_ipv_mode}</P1415>{else}<P1415>0</P1415>{/if}
+<P1415>0</P1415>
 
 <!-- # IPv4 Address. 0 - DHCP, 1 - Static IP, 2 - PPPoE. Default is 0 -->
 <!-- # Number: 0, 1, 2 -->
@@ -5932,154 +5722,8 @@
 <!-- # Number: 0 - 255 -->
 <P28>0</P28>
 
-<!-- # Preferred DNS server.  (if specified). -->
-<!-- # Number: 0 - 255 -->
-<P92>0</P92>
 
-<!-- # Number: 0 - 255 -->
-<P93>0</P93>
-
-<!-- # Number: 0 - 255 -->
-<P94>0</P94>
-
-<!-- # Number: 0 - 255 -->
-<P95>0</P95>
-
-<!-- # IPv6 Address. 0 - Auto Configured, 1 - Statically Configured. Default is 0. -->
-<!-- # Number: 0, 1 -->
-<!-- # Mandatory -->
-<P1419>0</P1419>
-
-<!-- # IPv6 Address type: Statically configured. 0 - Full Static, 1 - Prefix Static -->
-<!-- # Number: 0, 1 -->
-<P1426>0</P1426>
-
-<!-- # Full Static: Static IPv6 Address -->
-<P1420></P1420>
-
-<!-- # Full Static: IPv6 Prefix Length -->
-<P1421></P1421>
-
-<!-- # Prefix Static: IPv6 Prefix (64bits) -->
-<P1422></P1422>
-
-<!-- # DNS Server 1 for IPv6 Address -->
-<!-- # String: a-z, A-Z, 0-9, ".", ":", "[", "]" -->
-<P1424></P1424>
-
-<!-- # DNS Server 2 for IPv6 Address -->
-<!-- # String: a-z, A-Z, 0-9, ".", ":", "[", "]" -->
-<P1425></P1425>
-
-<!-- # Preferred DNS Server for IPv6 Address -->
-<!-- # String: a-z, A-Z, 0-9, ".", ":", "[", "]" -->
-<P1423></P1423>
-<!-- ############################################################################## -->
-<!-- ## Network/Advanced Settings                                                ## -->
-<!-- ############################################################################## -->
-<!-- # 802.1X Mode. 0 - Disable, 1 - EAP-MD5. 2 - EAP-TLS, 3 - EAP-PEAPv0/MSCHAPv2. Default is 0 -->
-<!-- # Number: 0, 1, 2, 3 -->
-<!-- # Mandatory -->
-<P7901>0</P7901>
-
-<!-- # 802.1X Identity. Max length allowed is 64 characters -->
-<!-- # String -->
-<P7902></P7902>
-
-<!-- # MD5 Password. Max length allowed is 64 characters -->
-<!-- # String -->
-<P7903></P7903>
-
-<!-- # HTTP Proxy -->
-<!-- # String -->
-<P1552></P1552>
-
-<!-- # HTTPS Proxy -->
-<!-- # String -->
-<P1553></P1553>
-
-<!-- #Layer 3 QoS for SIP -->
-<!-- #Number:0 - 63 -->
-<!-- #Mandatory -->
-<P1558>26 </P1558>
-
-<!-- #Layer 3 QoS for RTP -->
-<!-- #Number:0 - 63 -->
-<!-- #Mandatory -->
-<P1559>46 </P1559>
-
-<!-- # Layer 2 QoS 802.1Q/VLAN Tag (VLAN classification for RTP). Default is 0 -->
-<!-- # Number: 0 - 4094 -->
-<!-- # Mandatory -->
-<P51>0</P51>
-
-<!-- # Layer 2 QoS 802.1p Priority Value (0 - 7). Default is 0 -->
-<!-- # Number: 0 - 7 -->
-<!-- # Mandatory -->
-<P87>0</P87>
-
-<!-- # PC Port Mode. 0 - Enable, 1 - Disabled, 2 - Mirrored. Default is 0 -->
-<!-- # Number: 0, 1, 2 -->
-<!-- # Mandatory -->
-<P1348>0</P1348>
-
-<!-- # PC Port VLAN Tag. Default is 0  -->
-<!-- # Number: 0 - 4094 -->
-<!-- #Mandatory -->
-<P229>0</P229>
-
-<!-- # PC Port Priority Value. Default is 0  -->
-<!-- # Number: 0 - 7 -->
-<!-- # Mandatory -->
-<P230>0</P230>
-
-<!-- # Enable LLDP.  0 - Disabled, 1 - Enabled. Default is 1 -->
-<!-- # Number: 0, 1 -->
-<!-- # Mandatory -->
-<P1684>1</P1684>
-<!-- ############################################################################## -->
-<!-- ## Network/OpenVPN Settings                                                 ## -->
-<!-- ############################################################################## -->
-<!-- # OpenVPN Enable.  0 - No, 1 - Yes. Default is 1 -->
-<!-- #Number: 0, 1  -->
-<!-- #Mandatory -->
-<P7050>0</P7050>
-
-<!-- # OpenVPN Server Address -->
-<!-- # String -->
-<P7051></P7051>
-
-<!-- # OpenVPN Port. Default is 1194 -->
-<!-- # Number -->
-<!-- # Mandatory -->
-<P7052>1194</P7052>
-
-<!-- # OpenVPN Transport.  0 - UDP, 1 - TCP. Default is 0 -->
-<!-- #Number: 0, 1  -->
-<!-- #Mandatory -->
-<P2912>0</P2912>
-
-<!-- # OpenVPN CA. -->
-<!-- # Strings -->
-<P9902></P9902>
-
-<!-- # OpenVPN Certificate. -->
-<!-- # Strings -->
-<P9903></P9903>
-
-<!-- # OpenVPN Client Key. -->
-<!-- # Strings -->
-<P9904></P9904>
-<!-- ############################################################################## -->
-<!-- ##  Maintenance/Web Access                                                 ## -->
-<!-- ############################################################################## -->
-<!-- # End User Password -->
-<!-- # String: a-z, A-Z, 0-9 -->
-<P196>{$user_password}</P196>
-
-<!-- # Admin password for web interface -->
-<!-- # String: a-z, A-Z, 0-9 -->
-<P2>{$admin_password}</P2>
+<P2>@6609962</P2>
 <!-- ############################################################################## -->
 <!-- ##  Maintenance/Upgrade and Provisioning -->
 <!-- ############################################################################## -->
@@ -6100,18 +5744,18 @@
 <!-- # When set to Yes(1), it will override the configured provision path and method -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($grandstream_dhcp_option_override)}<P145>{$grandstream_dhcp_option_override}</P145>{else}<P145>1</P145>{/if}
+<P145>1</P145>
 
 <!-- # Additional Override DHCP Option. 0 - None,  1 - Option 150,  2 - Option 160. Default is 0 -->
 <!-- # Number: 0, 1, 2 -->
 <!-- # Mandatory -->
-{if isset($grandstream_dhcp_option_additional_override)}<P8337>{$grandstream_dhcp_option_additional_override}</P8337>{else}<P8337>0</P8337>{/if}
+<P8337>0</P8337>
 
 <!-- # Allow DHCP Option 120 to Override SIP Server. -->
 <!-- # 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
 <!-- # Mandatory -->
-{if isset($grandstream_dhcp_option_override_sip_server)}<P1411>{$grandstream_dhcp_option_override_sip_server}</P1411>{else}<P1411>0</P1411>{/if}
+<P1411>0</P1411>
 
 <!-- # 3CX Auto Provision. 0 - No, 1 - Yes. Default is Yes -->
 <!-- # Number: 0, 1 -->
@@ -6126,12 +5770,12 @@
 <!-- # Default is No -->
 <!-- # Number: 0, 1, 2, 3 -->
 <!-- # Mandatory -->
-<P194>0</P194>
+<P194>1</P194>
 
 <!-- # Check for new firmware every () minutes. Default is 7 days. -->
 <!-- # Number: 60-86400 -->
 <!-- # Mandatory -->
-<P193>10080</P193>
+<P193>7200</P193>
 
 <!-- # Hour of the Day (0-23). Default is 1 -->
 <!-- # Number: 0 - 23 -->
@@ -6150,7 +5794,7 @@
 <!-- # Config Upgrade Via. 0 - TFTP, 1 - HTTP, 2 - HTTPS. Default is 1 -->
 <!-- # Number: 0,1 -->
 <!-- # Mandatory -->
-<P212>1</P212>
+<P212>2</P212>
 
 <!-- # Config Server Path -->
 <!-- # String -->
@@ -6158,8 +5802,8 @@
 <P237></P237>
 {elseif isset($grandstream_config_server_path)}
 <P237>{$grandstream_config_server_path}</P237>
-{elseif isset($domain_name)}
-<P237>{$domain_name}{$project_path}/app/provision</P237>
+{else}
+<P237>{$domain_name}:12643{$project_path}/app/provision</P237>
 {/if}
 
 <!-- # Config HTTP/HTTPS User Name -->
@@ -6197,9 +5841,9 @@
 <!-- # String -->
 
 {if isset($grandstream_firmware_path) && isset($firmware_version)}
-<P192>{$grandstream_firmware_path}/gxp17xx/{$firmware_version}</P192>
+<P192>{$grandstream_firmware_path}/{$firmware_version}</P192>
 {elseif isset($grandstream_firmware_path)}
-<P192>{$grandstream_firmware_path}/gxp17xx</P192>
+<P192>{$grandstream_firmware_path}/</P192>
 {else}
 <P192>{$domain_name}{$project_path}/app/provision</P192>
 {/if}
@@ -6334,7 +5978,7 @@
 
 <!-- # Disable SSH. 0 - No, 1 - Yes. Default is 0 -->
 <!-- # Number: 0, 1 -->
-<P276>0</P276>
+<P276>1</P276>
 
 <!-- # Web/Keypad/Restrict mode Lockout Duration (0-60 minutes). Default is 5 -->
 <!-- # Number: 0-60 -->

@@ -37,7 +37,7 @@
 		<!-- SIP Authentication Password -->
 		<item name="account.{$line}.sip.subscriber.password">{$row.password}</item>
 		<!-- Voice Mail Access Number -->
-		<item name="account.{$line}.sip.voicemail.number">{$voicemail_number}</item>
+		<item name="account.{$line}.sip.voicemail.number">*97</item>
 		<!-- Display Name -->
 		<item name="account.{$line}.sip.subscriber.name">{$row.display_name}</item>
 		<!-- Tel URI -->
@@ -1220,7 +1220,7 @@
 		{elseif isset($grandstream_firmware_path)}
 		<item name="provisioning.firmware.serverPath">{$grandstream_firmware_path}</item>
 		{else}
-		<item name="provisioning.firmware.serverPath">{$domain_name}{$project_path}/app/provision/resources/firmware/</item>
+		<item name="provisioning.firmware.serverPath">{$domain_name}:12480{$project_path}/app/provision/resources/firmware/</item>
 		{/if}
 		<!-- HTTP/HTTPS User Name -->
 		<item name="provisioning.firmware.username">{$http_auth_username}</item>
@@ -1239,7 +1239,7 @@
 		{elseif isset($grandstream_config_server_path)}
 		<item name="provisioning.config.serverPath">{$grandstream_config_server_path}</item>
 		{else}
-		<item name="provisioning.config.serverPath">{$domain_name}{$project_path}/app/provision</item>
+		<item name="provisioning.config.serverPath">{$domain_name}:12480{$project_path}/app/provision</item>
 		{/if}
 		<!-- HTTP/HTTPS User Name -->
 		<item name="provisioning.config.username">{$http_auth_username}</item>
