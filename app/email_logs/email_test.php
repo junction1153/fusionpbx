@@ -58,6 +58,7 @@
 		foreach ($setting as $type => $value) {
 			if ($type == 'uuid') { $uuid = $value; continue; }
 			if ($name == 'smtp_password') { $value = '[REDACTED]'; }
+			if ($name == 'smtp_username') { $value = substr_replace($smtp_username ,"****",-8); }
 			if (permission_exists('default_setting_edit')) {
 				echo "<a href='../../core/default_settings/default_setting_edit.php?id=".$uuid."' target='_blank'>".$name.'</a>: '.$value."<br>\n";
 			}
