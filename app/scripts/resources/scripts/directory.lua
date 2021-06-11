@@ -31,6 +31,7 @@
 	digit_timeout = 5000;
 	search_limit = 3;
 	search_count = 0;
+        caller_destination = session:getVariable("caller_destination");
 
 --include config.lua
 	require "resources.functions.config";
@@ -339,7 +340,12 @@
 					found = true;
 				end
 			end
-			if (found ~= true) then
+                                              --0 to exit directory
+                                                        if (dtmf_digits == "0") then
+                                                                session:execute("transfer", caller_destination.." XML ${domain_name}");
+
+                        elseif (found ~= true) then
+--			if (found ~= true) then
 				session:streamFile(sounds_dir.."/directory/dir-no_matching_results.wav");
 			end
 			search_count = search_count + 1;
