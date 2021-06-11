@@ -206,6 +206,10 @@
 	if (permission_exists('group_edit') && $_SESSION['theme']['list_row_edit_button']['boolean'] == 'true') {
 		echo "	<td class='action-button'>&nbsp;</td>\n";
 	}
+//HP:START
+                echo th_order_by('group_protected', "Domain Permissions", $order_by, $order, null, "class='center'");
+//HP:END
+
 	echo "</tr>\n";
 
 	if (is_array($groups) && @sizeof($groups) != 0) {
