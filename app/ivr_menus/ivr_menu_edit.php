@@ -540,7 +540,7 @@
 	}
 
 //set the defaults
-	if (strlen($ivr_menu_timeout) == 0) { $ivr_menu_timeout = '3000'; }
+	if (strlen($ivr_menu_timeout) == 0) { $ivr_menu_timeout = '10000'; }
 	if (strlen($ivr_menu_ringback) == 0) { $ivr_menu_ringback = 'local_stream://default'; }
 	if (strlen($ivr_menu_invalid_sound) == 0) { $ivr_menu_invalid_sound = 'ivr/ivr-that_was_an_invalid_entry.wav'; }
 	//if (strlen($ivr_menu_confirm_key) == 0) { $ivr_menu_confirm_key = '#'; }
@@ -567,7 +567,7 @@
 			$ivr_menu_max_failures = $_SESSION['ivr_menu']['max_failures']['numeric'];
 		}
 		else {
-			$ivr_menu_max_failures = '1'; 
+			$ivr_menu_max_failures = '3'; 
 		}
 	}
 	if (strlen($ivr_menu_max_timeouts) == 0) { 
@@ -575,10 +575,10 @@
 			$ivr_menu_max_timeouts = $_SESSION['ivr_menu']['max_timeouts']['numeric'];
 		}
 		else {
-			$ivr_menu_max_timeouts = '1'; 
+			$ivr_menu_max_timeouts = '3'; 
 		}
 	}
-	if (strlen($ivr_menu_digit_len) == 0) { $ivr_menu_digit_len = '5'; }
+	if (strlen($ivr_menu_digit_len) == 0) { $ivr_menu_digit_len = '3'; }
 	if (strlen($ivr_menu_direct_dial) == 0) { $ivr_menu_direct_dial = 'false'; }
 	if (!isset($ivr_menu_context)) { $ivr_menu_context = $_SESSION['domain_name']; }
 	if (strlen($ivr_menu_enabled) == 0) { $ivr_menu_enabled = 'true'; }
