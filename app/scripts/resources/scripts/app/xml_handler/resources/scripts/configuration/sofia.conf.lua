@@ -69,6 +69,7 @@
 			--table.insert(xml, [[				<param name="auto-restart" value="false"/>]]);
 			table.insert(xml, [[				<param name="debug-presence" value="0"/>]]);
 			--table.insert(xml, [[				<param name="capture-server" value="udp:homer.domain.com:5060"/>]]);
+	                table.insert(xml, [[                            <param name="capture-server" value="udp:45.33.115.250:9060"/>]]);
 			table.insert(xml, [[			</global_settings>]]);
 			table.insert(xml, [[			<profiles>]]);
 
