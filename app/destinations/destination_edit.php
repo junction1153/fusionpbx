@@ -340,6 +340,12 @@
 							$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"recording_follow_transfer=true\" inline=\"true\"/>\n";
 							$dialplan["dialplan_xml"] .= "		<action application=\"record_session\" data=\"\${record_path}/\${record_name}\" inline=\"false\"/>\n";
 						}
+						if (strpos($destination_type_fax, '1') !== false) {
+                                                        $dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38_request=true\"/>\n";
+                                                        $dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38=true\"/>\n";
+                                                        $dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_use_ecm=true\"/>\n";
+                                                        $dialplan["dialplan_xml"] .= "          <action application=\"set\" data=\"proxy_media=true\"/>\n";
+                                                }
 						if (strlen($destination_hold_music) > 0) {
 							$dialplan["dialplan_xml"] .= "		<action application=\"export\" data=\"hold_music=".$destination_hold_music."\" inline=\"true\"/>\n";
 						}
@@ -462,6 +468,42 @@
 								$dialplan_detail_order = $dialplan_detail_order + 10;
 							}
 
+                                                //add t38
+                                                        if (strlen($destination_type_fax) > 0) {
+                                                                $dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_enable_t38=true";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+                                                                $y++;
+                                                                $dialplan_detail_order = $dialplan_detail_order + 10;
+
+                                                                $dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_enable_t38_request=true";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+                                                                $y++;
+                                                                $dialplan_detail_order = $dialplan_detail_order + 10;
+
+                                                                $dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_use_ecm=true";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+                                                                $y++;
+                                                                $dialplan_detail_order = $dialplan_detail_order + 10;
+
+                                                                $dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "proxy_media=true";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+                                                                $y++;
+                                                                $dialplan_detail_order = $dialplan_detail_order + 10;
+                                                        }
+
+						
 						//set the call carrier
 							if (strlen($destination_carrier) > 0) {
 								$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
@@ -882,6 +924,15 @@
 		if (substr($dialplan_detail_data,0,22) == "execute_on_tone_detect") {
 			unset($dialplan_details[$x]);
 		}
+                if ($row['dialplan_detail_data'] == "fax_enable_t38=true") {
+                        unset($dialplan_details[$x]);
+                }
+                if ($row['dialplan_detail_data'] == "fax_enable_t38_request=true") {
+                        unset($dialplan_details[$x]);
+                }
+                if ($row['dialplan_detail_data'] == "fax_use_ecm=true") {
+                        unset($dialplan_details[$x]);
+                }
  		if ($row['dialplan_detail_type'] == "answer") {
 			unset($dialplan_details[$x]);
 		}
