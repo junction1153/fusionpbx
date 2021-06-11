@@ -230,7 +230,8 @@
 
 //delete the line from the v_device_lines
 	if (is_dir($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH.'/app/devices')) {
-		if ($_REQUEST["delete_type"] == "device_line" && is_uuid($_REQUEST["delete_uuid"]) && permission_exists("extension_delete")) {
+//		if ($_REQUEST["delete_type"] == "device_line" && is_uuid($_REQUEST["delete_uuid"]) && permission_exists("extension_delete")) {
+		if ($_REQUEST["delete_type"] == "device_line" && is_uuid($_REQUEST["delete_uuid"])) {
 			//set the variables
 				$device_line_uuid = $_REQUEST["delete_uuid"];
 
