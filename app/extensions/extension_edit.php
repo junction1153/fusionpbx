@@ -986,6 +986,44 @@
 	echo "</td>\n";
 	echo "</tr>\n";
 
+        if (permission_exists("effective_caller_id_name")) {
+                echo "<tr>\n";
+                echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
+                echo "    ".$text['label-effective_caller_id_name']."\n";
+                echo "</td>\n";
+                echo "<td class='vtable' align='left'>\n";
+                echo "    <input class='formfld' type='text' name='effective_caller_id_name' maxlength='255' value=\"".escape($effective_caller_id_name)."\">\n";
+                echo "<br />\n";
+                echo $text['description-effective_caller_id_name']."\n";
+                echo "</td>\n";
+                echo "</tr>\n";
+        }
+
+        if (permission_exists('voicemail_edit') && is_dir($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH.'/app/voicemails')) {
+                echo "<tr>\n";
+                echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
+                echo "    ".$text['label-voicemail_mail_to']."\n";
+                echo "</td>\n";
+                echo "<td class='vtable' align='left'>\n";
+                echo "    <input class='formfld' type='text' name='voicemail_mail_to' maxlength='255' value=\"".escape($voicemail_mail_to)."\">\n";
+                echo "<br />\n";
+                echo $text['description-voicemail_mail_to']."\n";
+                echo "</td>\n";
+                echo "</tr>\n";
+		
+		echo "<tr>\n";
+		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
+		echo "    ".$text['label-voicemail_password']."\n";
+		echo "</td>\n";
+		echo "<td class='vtable' align='left'>\n";
+		echo "    <input type='password' style='display: none;' disabled='disabled'>\n"; //help defeat browser auto-fill
+		echo "    <input class='formfld' type='password' name='voicemail_password' id='voicemail_password' autocomplete='new-password' onmouseover=\"this.type='text';\" onfocus=\"this.type='text';\" onmouseout=\"if (!$(this).is(':focus')) { this.type='password'; }\" onblur=\"this.type='password';\" maxlength='255' value='".escape($voicemail_password)."'>\n";
+		echo "    <br />\n";
+		echo "    ".$text['description-voicemail_password']."\n";
+		echo "</td>\n";
+		echo "</tr>\n";
+	}
+
 	if (permission_exists('number_alias')) {
 		echo "<tr>\n";
 		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
@@ -1088,31 +1126,6 @@
 		echo "			<br />\n";
 		echo "		</td>";
 		echo "	</tr>";
-	}
-
-	if (permission_exists('voicemail_edit') && is_dir($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH.'/app/voicemails')) {
-	        echo "<tr>\n";
-                echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-                echo "    ".$text['label-voicemail_mail_to']."\n";
-                echo "</td>\n";
-                echo "<td class='vtable' align='left'>\n";
-                echo "    <input class='formfld' type='text' name='voicemail_mail_to' maxlength='255' value=\"".escape($voicemail_mail_to)."\">\n";
-                echo "<br />\n";
-                echo $text['description-voicemail_mail_to']."\n";
-                echo "</td>\n";
-                echo "</tr>\n";
-
-		echo "<tr>\n";
-		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-		echo "    ".$text['label-voicemail_password']."\n";
-		echo "</td>\n";
-		echo "<td class='vtable' align='left'>\n";
-		echo "    <input type='password' style='display: none;' disabled='disabled'>\n"; //help defeat browser auto-fill
-		echo "    <input class='formfld' type='password' name='voicemail_password' id='voicemail_password' autocomplete='new-password' onmouseover=\"this.type='text';\" onfocus=\"this.type='text';\" onmouseout=\"if (!$(this).is(':focus')) { this.type='password'; }\" onblur=\"this.type='password';\" maxlength='255' value='".escape($voicemail_password)."'>\n";
-		echo "    <br />\n";
-		echo "    ".$text['description-voicemail_password']."\n";
-		echo "</td>\n";
-		echo "</tr>\n";
 	}
 
 	if (permission_exists('extension_accountcode')) {
@@ -1509,17 +1522,17 @@
 	}
 
 	if (permission_exists("extension_directory")) {
-		echo "<tr>\n";
-		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-		echo "    ".$text['label-directory_full_name']."\n";
-		echo "</td>\n";
-		echo "<td class='vtable' align='left'>\n";
-		echo "    <input class='formfld' type='text' name='directory_first_name' maxlength='255' value=\"".escape($directory_first_name)."\">\n";
-		echo "    <input class='formfld' type='text' name='directory_last_name' maxlength='255' value=\"".escape($directory_last_name)."\">\n";
-		echo "<br />\n";
-		echo $text['description-directory_full_name']."\n";
-		echo "</td>\n";
-		echo "</tr>\n";
+//		echo "<tr>\n";
+//		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
+//		echo "    ".$text['label-directory_full_name']."\n";
+//		echo "</td>\n";
+//		echo "<td class='vtable' align='left'>\n";
+//		echo "    <input class='formfld' type='text' name='directory_first_name' maxlength='255' value=\"".escape($directory_first_name)."\">\n";
+//		echo "    <input class='formfld' type='text' name='directory_last_name' maxlength='255' value=\"".escape($directory_last_name)."\">\n";
+//		echo "<br />\n";
+//		echo $text['description-directory_full_name']."\n";
+//		echo "</td>\n";
+//		echo "</tr>\n";
 
 		echo "<tr>\n";
 		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
@@ -1608,19 +1621,6 @@
 		echo "</td>\n";
 		echo "</tr>\n";
 	}
-
-        if (permission_exists("effective_caller_id_name")) {
-                echo "<tr>\n";
-                echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";
-                echo "    ".$text['label-effective_caller_id_name']."\n";
-                echo "</td>\n";
-                echo "<td class='vtable' align='left'>\n";
-                echo "    <input class='formfld' type='text' name='effective_caller_id_name' maxlength='255' value=\"".escape($effective_caller_id_name)."\">\n";
-                echo "<br />\n";
-                echo $text['description-effective_caller_id_name']."\n";
-                echo "</td>\n";
-                echo "</tr>\n";
-        }
 
 	if (permission_exists('voicemail_edit') && is_dir($_SERVER["DOCUMENT_ROOT"].PROJECT_PATH.'/app/voicemails')) {
 		echo "<tr>\n";
