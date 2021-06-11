@@ -768,34 +768,34 @@
 	echo "		<td class='vtable'><input type='text' class='formfld' name='user_email' value='".escape($user_email)."' required='required'></td>";
 	echo "	</tr>";
 
-	echo "	<tr>\n";
-	echo "	<td width='20%' class=\"vncell\" valign='top'>\n";
-	echo "		".$text['label-user_language']."\n";
-	echo "	</td>\n";
-	echo "	<td class=\"vtable\" align='left'>\n";
-	echo "		<select id='user_language' name='user_language' class='formfld' style=''>\n";
-	echo "		<option value=''></option>\n";
-	//get all language codes from database
-	$sql = "select * from v_languages order by language asc ";
-	$database = new database;
-	$languages = $database->select($sql, null, 'all');
-	if (is_array($languages) && sizeof($languages) != 0) {
-		foreach ($languages as $row) {
-			$language_codes[$row["code"]] = $row["language"];
-		}
-	}
-	unset($sql, $languages, $row);
-	if (is_array($_SESSION['app']['languages']) && sizeof($_SESSION['app']['languages']) != 0) {
-		foreach ($_SESSION['app']['languages'] as $code) {
-			$selected = $code == $user_language || $code == $user_settings['domain']['language']['code'] ? "selected='selected'" : null;
-			echo "	<option value='".$code."' ".$selected.">".escape($language_codes[$code])." [".escape($code)."]</option>\n";
-		}
-	}
-	echo "		</select>\n";
-	echo "		<br />\n";
-	echo "		".$text['description-user_language']."<br />\n";
-	echo "	</td>\n";
-	echo "	</tr>\n";
+//	echo "	<tr>\n";
+//	echo "	<td width='20%' class=\"vncell\" valign='top'>\n";
+//	echo "		".$text['label-user_language']."\n";
+//	echo "	</td>\n";
+//	echo "	<td class=\"vtable\" align='left'>\n";
+//	echo "		<select id='user_language' name='user_language' class='formfld' style=''>\n";
+//	echo "		<option value=''></option>\n";
+//	//get all language codes from database
+//	$sql = "select * from v_languages order by language asc ";
+//	$database = new database;
+//	$languages = $database->select($sql, null, 'all');
+//	if (is_array($languages) && sizeof($languages) != 0) {
+//		foreach ($languages as $row) {
+//			$language_codes[$row["code"]] = $row["language"];
+//		}
+//	}
+//	unset($sql, $languages, $row);
+//	if (is_array($_SESSION['app']['languages']) && sizeof($_SESSION['app']['languages']) != 0) {
+//		foreach ($_SESSION['app']['languages'] as $code) {
+//			$selected = $code == $user_language || $code == $user_settings['domain']['language']['code'] ? "selected='selected'" : null;
+//			echo "	<option value='".$code."' ".$selected.">".escape($language_codes[$code])." [".escape($code)."]</option>\n";
+//		}
+//	}
+//	echo "		</select>\n";
+//	echo "		<br />\n";
+//	echo "		".$text['description-user_language']."<br />\n";
+//	echo "	</td>\n";
+//	echo "	</tr>\n";
 
 	echo "	<tr>\n";
 	echo "	<td width='20%' class=\"vncell\" valign='top'>\n";
