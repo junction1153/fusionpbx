@@ -25,7 +25,7 @@
 --		Luis Daniel Lucio Quiroz
 
 --set default variables
-	fax_retry_sleep = 30;
+	fax_retry_sleep = 300;
 	fax_retry_limit = 4;
 	fax_busy_limit = 5;
 	api = freeswitch.API();
@@ -162,9 +162,11 @@
 	end
 
 --be sure accountcode is not empty
-	if (accountcode == nil) then
-		accountcode = domain_name;
-	end
+        if (accountcode == nil) then
+--              accountcode = env:getHeader("accountcode");
+                accountcode = string.sub('F02'..domain_name, 1, -16);
+--              accountcode = F02..tmpaccountcode;
+        end
 
 --get the domain_uuid using the domain name required for multi-tenant
 	if (domain_uuid ~= nil and fax_extension ~= nil) then
@@ -499,7 +501,7 @@
 
 		--to keep the originate command shorter these are things we always send. One place to adjust for all.
 		--originate_same = "for_fax=1,accountcode='"..accountcode.."',domain_uuid="..domain_uuid..",domain_name="..domain_name..",mailto_address='"..email_address.."',mailfrom_address='"..from_address.."',origination_caller_id_name='"..origination_caller_id_name.. "',origination_caller_id_number="..origination_caller_id_number..",fax_uri="..fax_uri..",fax_retry_limit="..fax_retry_limit..",fax_retry_sleep="..fax_retry_sleep..",fax_verbose=true,fax_file='"..fax_file.."'";
-		originate_same = "for_fax=1,accountcode='"..accountcode.."',domain_uuid="..domain_uuid..",domain_name="..domain_name..",mailto_address='"..email_address.."',mailfrom_address='"..from_address.."',origination_caller_id_name='"..origination_caller_id_name.. "',origination_caller_id_number="..origination_caller_id_number..",fax_uri="..fax_uri..",fax_retry_limit="..fax_retry_limit..",fax_retry_sleep="..fax_retry_sleep..",fax_verbose=true,fax_file='"..fax_file.."',fax_ident='"..origination_caller_id_number.."',fax_header='"..origination_caller_id_name.."'";
+		originate_same = "for_fax=1,sip_h_X-customacc='"..accountcode.."',domain_uuid="..domain_uuid..",domain_name="..domain_name..",mailto_address='"..email_address.."',mailfrom_address='"..from_address.."',origination_caller_id_name='"..origination_caller_id_name.. "',origination_caller_id_number="..origination_caller_id_number..",fax_uri="..fax_uri..",fax_retry_limit="..fax_retry_limit..",fax_retry_sleep="..fax_retry_sleep..",fax_verbose=true,fax_file='"..fax_file.."',fax_ident='"..origination_caller_id_number.."',fax_header='"..origination_caller_id_name.."'";
 
 		if (fax_retry_attempts < fax_retry_limit) then
 
@@ -530,9 +532,9 @@
 					fax_retry_attempts = fax_retry_attempts + 1;
 				end
 				if (ignore_early_media == "true") then
-					cmd = "originate {accountcode='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=true,fax_enable_t38=true,fax_enable_t38_request=true,ignore_early_media=true,fax_disable_v17=false,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
+					cmd = "originate {sip_h_X-customacc='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=true,fax_enable_t38=true,fax_enable_t38_request=true,ignore_early_media=true,fax_disable_v17=false,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
 				else
-					cmd = "originate {accountcode='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=true,fax_enable_t38=true,fax_enable_t38_request=true,fax_disable_v17=false,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
+					cmd = "originate {sip_h_X-customacc='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=true,fax_enable_t38=true,fax_enable_t38_request=true,fax_disable_v17=false,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
 				end
 
 			elseif (fax_retry_attempts == 2) then
@@ -541,7 +543,7 @@
 				if (hangup_cause_q850 ~= 17) then
 					fax_retry_attempts = fax_retry_attempts + 1;
 				end
-				cmd = "originate {accountcode='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=true,fax_enable_t38=false,fax_enable_t38_request=false,fax_disable_v17=false,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
+				cmd = "originate {sip_h_X-customacc='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=true,fax_enable_t38=false,fax_enable_t38_request=false,fax_disable_v17=false,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
 
 			elseif (fax_retry_attempts == 3) then
 				--send t38 on v17 [slow] on ECM off
@@ -550,9 +552,9 @@
 					fax_retry_attempts = fax_retry_attempts + 1;
 				end
 				if (ignore_early_media == "true") then
-					cmd = "originate {accountcode='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=false,fax_enable_t38=true,fax_enable_t38_request=true,ignore_early_media=true,fax_disable_v17=true,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
+					cmd = "originate {sip_h_X-customacc='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=false,fax_enable_t38=true,fax_enable_t38_request=true,ignore_early_media=true,fax_disable_v17=true,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
 				else
-					cmd = "originate {accountcode='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=false,fax_enable_t38=true,fax_enable_t38_request=true,fax_disable_v17=true,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
+					cmd = "originate {sip_h_X-customacc='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=false,fax_enable_t38=true,fax_enable_t38_request=true,fax_disable_v17=true,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
 				end
 
 			elseif (fax_retry_attempts == 4) then
@@ -562,7 +564,7 @@
 					fax_retry_attempts = fax_retry_attempts + 1;
 				end
 
-				cmd = "originate {accountcode='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=false,fax_enable_t38=false,fax_enable_t38_request=false,fax_disable_v17=true,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
+				cmd = "originate {sip_h_X-customacc='"..accountcode.."',fax_retry_attempts="..fax_retry_attempts..","..originate_same..",fax_use_ecm=false,fax_enable_t38=false,fax_enable_t38_request=false,fax_disable_v17=true,fax_busy_attempts='"..fax_busy_attempts.."',api_hangup_hook='lua fax_retry.lua'}"..fax_uri.." &txfax('"..fax_file.."')";
 
 			--bad number
 			elseif (fax_retry_attempts == 10) then
