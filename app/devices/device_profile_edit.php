@@ -157,6 +157,17 @@
 					$array['device_profiles'][0]['device_profile_keys'][$y]["profile_key_protected"] = $row["profile_key_protected"];
 					$array['device_profiles'][0]['device_profile_keys'][$y]["profile_key_label"] = $row["profile_key_label"];
 					$array['device_profiles'][0]['device_profile_keys'][$y]["profile_key_icon"] = $row["profile_key_icon"];
+                                        //update key label
+                                        $array['device_profiles'][0]['device_profile_keys'][$y]["profile_key_label"] = $row["profile_key_label"];
+                                        $sql = "select effective_caller_id_name from v_extensions ";
+                                        $sql .= "where extension = :extension ";
+                                        $sql .= " and domain_uuid = :domain_uuid ";
+                                        $parameters['domain_uuid'] = $_SESSION['domain_uuid'];
+                                        $parameters['extension'] = $row["profile_key_value"];
+                                        $database = new database;
+                                        $effective_caller_id_name_row = $database->select($sql, $parameters, 'row');
+                                        unset($sql, $parameters);
+                                        $array['device_profiles'][0]['device_profile_keys'][$y]["profile_key_label"] = ($effective_caller_id_name_row && $effective_caller_id_name_row['effective_caller_id_name'] != "")?$effective_caller_id_name_row['effective_caller_id_name']:$row["profile_key_label"];
 					$y++;
 				}
 			}
