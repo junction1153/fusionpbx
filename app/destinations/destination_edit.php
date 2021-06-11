@@ -262,6 +262,9 @@
 					}
 
 				//convert the number to a regular expression
+				
+                                        if (strlen($destination_prefix) == 0 && strlen($destination_number) == 10) { $destination_prefix = '1'; }
+
 					if (isset($destination_prefix) && strlen($destination_prefix) > 0) {
 						$destination_numbers['destination_prefix'] = $destination_prefix;
 					}
