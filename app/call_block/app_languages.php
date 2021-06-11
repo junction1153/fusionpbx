@@ -1,7 +1,7 @@
 <?php
 #This file was last reorganized on 19th of September 2017 08:54:24 AM UTC
 
-$text['title-call-block']['en-us'] = "Call Block";
+$text['title-call-block']['en-us'] = "Call Routing";
 $text['title-call-block']['en-gb'] = "Call Block";
 $text['title-call-block']['ar-eg'] = "حظر المكالمات";
 $text['title-call-block']['de-at'] = "Sperrlisten"; //copied from de-de
@@ -350,7 +350,7 @@ $text['label-edit-note']['ru-ru'] = "Блокировать вызовы от н
 $text['label-edit-note']['sv-se'] = "Blockera samtal från nummer. Editera namn och Aktiv/Inaktiv nedan.";
 $text['label-edit-note']['uk-ua'] = "Блокувати дзвінки з номера. Змініть ім'я і включіть/відключіть нижче.";
 
-$text['label-edit-edit']['en-us'] = "Call Block";
+$text['label-edit-edit']['en-us'] = "Call Routing";
 $text['label-edit-edit']['en-gb'] = "Call Block";
 $text['label-edit-edit']['ar-eg'] = "";
 $text['label-edit-edit']['de-at'] = "Sperrlisten"; //copied from de-de
