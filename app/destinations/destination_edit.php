@@ -343,12 +343,14 @@
 							$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"recording_follow_transfer=true\" inline=\"true\"/>\n";
 							$dialplan["dialplan_xml"] .= "		<action application=\"record_session\" data=\"\${record_path}/\${record_name}\" inline=\"false\"/>\n";
 						}
-						if (strpos($destination_type_fax, '1') !== false) {
+						
+                                                if (strpos($destination_type_fax, '1') !== false) {
                                                         $dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38_request=true\"/>\n";
                                                         $dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38=true\"/>\n";
                                                         $dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_use_ecm=true\"/>\n";
-                                                        $dialplan["dialplan_xml"] .= "          <action application=\"set\" data=\"proxy_media=true\"/>\n";
+                                                        $dialplan["dialplan_xml"] .= "          <action application=\"set\" data=\"inbound-proxy-media=true\"/>\n";
                                                 }
+						
 						if (strlen($destination_hold_music) > 0) {
 							$dialplan["dialplan_xml"] .= "		<action application=\"export\" data=\"hold_music=".$destination_hold_music."\" inline=\"true\"/>\n";
 						}
@@ -500,13 +502,12 @@
                                                                 $dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
                                                                 $dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
                                                                 $dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
-                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "proxy_media=true";
+                                                                $dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "inbound-proxy-media=true";
                                                                 $dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
                                                                 $y++;
                                                                 $dialplan_detail_order = $dialplan_detail_order + 10;
                                                         }
 
-						
 						//set the call carrier
 							if (strlen($destination_carrier) > 0) {
 								$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
