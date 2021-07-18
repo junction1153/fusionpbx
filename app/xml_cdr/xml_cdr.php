@@ -30,6 +30,9 @@
 	require_once "resources/require.php";
 	require_once "resources/check_auth.php";
 	require_once "resources/paging.php";
+        //HP:CHANGES_START_AWS
+//      require_once 'aws_s3/aws_config.php';
+        //HP:CHANGES_END_AWS
 
 //check permisions
 	if (permission_exists('xml_cdr_view')) {
@@ -105,7 +108,6 @@
                 echo "});\n";
         echo "}\n";
 //HP:CHANGE_END_AWS
-
 	echo "	function send_cmd(url) {\n";
 	echo "		if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari\n";
 	echo "			xmlhttp=new XMLHttpRequest();\n";
@@ -651,7 +653,18 @@
 		//loop through the results
 			$x = 0;
 			foreach ($result as $index => $row) {
-
+//HP:START                                //get the date and time
+                                        $tmp_year = date("Y", strtotime($row['start_stamp']));
+                                        $tmp_month = date("M", strtotime($row['start_stamp']));
+                                        $tmp_day = date("d", strtotime($row['start_stamp']));
+                                        $tmp_start_epoch_date = escape(date("j M Y", $row['start_epoch']));
+                                        if ($_SESSION['domain']['time_format']['text'] == '12h') {
+                                                $tmp_start_epoch_time = escape(date("g:i:s a", $row['start_epoch']));
+                                        }
+                                        else {
+                                                $tmp_start_epoch_time = escape(date("H:i:s", $row['start_epoch']));
+                                        }
+//HP:END
 				//get the hangup cause
 					$hangup_cause = $row['hangup_cause'];
 					$hangup_cause = str_replace("_", " ", $hangup_cause);
@@ -773,7 +786,7 @@
 					}
 				//recording
 					if (permission_exists('xml_cdr_recording') && (permission_exists('xml_cdr_recording_play') || permission_exists('xml_cdr_recording_download'))) {
-						if ($record_path != '') {
+                                                if ($record_path != '' && file_exists($record_path.'/'.$record_name)) {
 							$content .= "	<td class='middle button center no-link no-wrap'>";
 							if (permission_exists('xml_cdr_recording_play')) {
 								$content .= 	"<audio id='recording_audio_".escape($row['xml_cdr_uuid'])."' style='display: none;' preload='none' ontimeupdate=\"update_progress('".escape($row['xml_cdr_uuid'])."')\" onended=\"recording_reset('".escape($row['xml_cdr_uuid'])."');\" src=\"download.php?id=".escape($row['xml_cdr_uuid'])."&t=record\" type='".escape($record_type)."'></audio>";
@@ -782,7 +795,7 @@
 							if (permission_exists('xml_cdr_recording_download')) {
 								$content .= button::create(['type'=>'button','title'=>$text['label-download'],'icon'=>$_SESSION['theme']['button_icon_download'],'link'=>"download.php?id=".urlencode($row['xml_cdr_uuid'])."&t=bin"]);
 							}
-                                                       $content .=     "\n";
+                                                        $content .=     "\n";
                                                         $content .=     "\nFusion\n";
                                                         $content .=     "</td>\n";
 						}
@@ -837,40 +850,48 @@
 							}
 						}
 					}
-				//start
-					if (permission_exists('xml_cdr_start')) {
-						$content .= "	<td class='middle right no-wrap'>".$row['start_date_formatted']."</td>\n";
-						$content .= "	<td class='middle right no-wrap hide-md-dn'>".$row['start_time_formatted']."</td>\n";
-					}
-				//tta (time to answer)
-					if (permission_exists('xml_cdr_tta')) {
-						$content .= "	<td class='middle right hide-md-dn'>".(($row['tta'] >= 0) ? $row['tta']."s" : "&nbsp;")."</td>\n";
-					}
-				//duration
-					if (permission_exists('xml_cdr_duration')) {
-						$content .= "	<td class='middle center hide-sm-dn'>".gmdate("G:i:s", $seconds)."</td>\n";
-					}
-				//pdd (post dial delay)
-					if (permission_exists("xml_cdr_pdd")) {
-						$content .= "	<td class='middle right hide-md-dn'>".number_format(escape($row['pdd_ms'])/1000,2)."s</td>\n";
-					}
-				//mos (mean opinion score)
-					if (permission_exists("xml_cdr_mos")) {
-						if(strlen($row['rtp_audio_in_mos']) > 0){
-							$title = " title='".$text['label-mos_score-'.round($row['rtp_audio_in_mos'])]."'";
-							$value = $row['rtp_audio_in_mos'];
-						}
-						$content .= "	<td class='middle center hide-md-dn' ".$title.">".$value."</td>\n";
-					}
-				//hangup cause/call result
-					if (permission_exists('xml_cdr_hangup_cause')) {
-						$content .= "	<td class='middle no-wrap hide-sm-dn'><a href='".$list_row_url."'>".escape($hangup_cause)."</a></td>\n";
-					}
-					else {
-						$content .= "	<td class='middle no-wrap hide-sm-dn'>".ucwords(escape($call_result))."</td>\n";
-					}
+                                //start
+                                        if (permission_exists('xml_cdr_start')) {
+                                                $content .= "   <td class='middle right no-wrap'>".$tmp_start_epoch_date."</td>\n";
+                                                $content .= "   <td class='middle right no-wrap hide-md-dn'>".$tmp_start_epoch_time."</td>\n";
+                                        }
+                                //tta (time to answer)
+                                        if (permission_exists('xml_cdr_tta')) {
+                                                $content .= "   <td class='middle right hide-md-dn'>".(($row['tta'] > 0) ? $row['tta']."s" : "&nbsp;")."</td>\n";
+                                        }
+                                //duration
+                                        if (permission_exists('xml_cdr_duration')) {
+                                                $content .= "   <td class='middle center hide-sm-dn'>".gmdate("G:i:s", $seconds)."</td>\n";
+                                        }
+                                //pdd (post dial delay)
+                                        if (permission_exists("xml_cdr_pdd")) {
+                                                $content .= "   <td class='middle right hide-md-dn'>".number_format(escape($row['pdd_ms'])/1000,2)."s</td>\n";
+                                        }
+                                //mos (mean opinion score)
+                                        if (permission_exists("xml_cdr_mos")) {
+                                                if(strlen($row['rtp_audio_in_mos']) > 0){
+                                                        $title = " title='".$text['label-mos_score-'.round($row['rtp_audio_in_mos'])]."'";
+                                                        $value = $row['rtp_audio_in_mos'];
+                                                }
+                                                $content .= "   <td class='middle center hide-md-dn' ".$title.">".$value."</td>\n";
+                                        }
+                                //hangup cause/call result
+                                        if (permission_exists('xml_cdr_hangup_cause')) {
+                                                $content .= "   <td class='middle no-wrap hide-sm-dn'><a href='".$list_row_url."'>".escape($hangup_cause)."</a></td>\n";
+                                        }
+                                        else {
+                                                $content .= "   <td class='middle no-wrap hide-sm-dn'>".ucwords(escape($call_result))."</td>\n";
+                                        }
 
-					$content .= "</tr>\n";
+                                        $content .= "</tr>\n";
+
+                                        if (!permission_exists('xml_cdr_lose_race') && $row['hangup_cause'] == 'LOSE_RACE') {
+                                                $content = '';
+                                        }
+                                //show agent originated legs only to those with the permission
+                                        if (!permission_exists('xml_cdr_cc_agent_leg') && $row['cc_side'] == "agent") {
+                                                $content = '';
+                                        }
 				//show the leg b only to those with the permission
 					if ($row['leg'] == 'a') {
 						echo $content;
