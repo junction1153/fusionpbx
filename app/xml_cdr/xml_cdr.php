@@ -84,6 +84,28 @@
 
 //javascript function: send_cmd
 	echo "<script type=\"text/javascript\">\n";
+//HP:CHANGE_START_AWS
+        echo "function recording_play_custom(record_name,domain_name,uuid,record_path){\n";
+                echo "$.ajax({\n";
+                        echo " type: 'GET',\n";
+                        echo " url: 'download_aws.php',\n";
+                        echo " aysnc: 'false',\n";
+                        echo "data: {record_path:record_path,file_name: record_name,domain_name:domain_name,t:'bucket',flag:'ajax'},\n";
+                        echo "success: function(data){\n";
+                                echo "if(data!='Not-exist'){\n";
+                                        echo "$('#recording_button_'+uuid).click();\n";
+                                        echo "$('#recording_button_custom_'+uuid).hide();\n";
+                                        echo "$('#recording_button_'+uuid).show();\n";
+                                echo "}else{ alert('No File Avaiable'); }\n";
+
+                        echo "},\n";
+                        echo " error: function(xhr, status, error){\n";
+                                echo " console.error(xhr)\n";
+                        echo "}\n";
+                echo "});\n";
+        echo "}\n";
+//HP:CHANGE_END_AWS
+
 	echo "	function send_cmd(url) {\n";
 	echo "		if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari\n";
 	echo "			xmlhttp=new XMLHttpRequest();\n";
@@ -760,10 +782,47 @@
 							if (permission_exists('xml_cdr_recording_download')) {
 								$content .= button::create(['type'=>'button','title'=>$text['label-download'],'icon'=>$_SESSION['theme']['button_icon_download'],'link'=>"download.php?id=".urlencode($row['xml_cdr_uuid'])."&t=bin"]);
 							}
-							$content .= 	"</td>\n";
+                                                       $content .=     "\n";
+                                                        $content .=     "\nFusion\n";
+                                                        $content .=     "</td>\n";
 						}
 						else {
-							$content .= "	<td>&nbsp;</td>\n";
+                                                        //HP:CHANGE_START_AWS
+                                                        $file_tmp_path = '/var/www/fusionpbx/aws_s3/tmp/';
+                                                        $file_check_bucket = $row['domain_name']."/".$row['record_name'];
+                                                        if(file_exists($file_tmp_path.$file_check_bucket) && $row['record_name'] !=""  && $row['domain_name'] !=""){
+                                                                $content .= "   <td class='middle button center no-link no-wrap'>";
+                                                        if (permission_exists('xml_cdr_recording_play')) {
+                                                                $content .=     "<audio id='recording_audio_".escape($row['xml_cdr_uuid'])."' style='display: none;' preload='none' ontimeupdate=\"update_progress('".escape($row['xml_cdr_uuid'])."')\" onended=\"recording_reset('".escape($row['xml_cdr_uuid'])."');\" src=\"download_aws.php?file_name=".urlencode($row['record_name'])."&domain_name=".urlencode($row['domain_name'])."&t=local\" type='".escape($record_type)."'></audio>";
+                                                                $content .= button::create(['type'=>'button','title'=>$text['label-play'].' / '.$text['label-pause'],'icon'=>$_SESSION['theme']['button_icon_play'],'id'=>'recording_button_'.escape($row['xml_cdr_uuid']),'onclick'=>"recording_play('".escape($row['xml_cdr_uuid'])."')"]);
+                                                        }
+                                                                if (permission_exists('xml_cdr_recording_download')) {
+                                                                        $content .= button::create(['type'=>'button','title'=>$text['label-download'],'icon'=>$_SESSION['theme']['button_icon_download'],'link'=>"download_aws.php?file_name=".urlencode($row['record_name'])."&domain_name=".urlencode($row['domain_name'])."&t=local"]);
+                                                                }
+                                                                $content .=     "\n";
+                                                                $content .=     "\nLocal\n";
+                                                                $content .=     "</td>\n";
+                                                        }else{
+                                                                //$cmd_output = exec('/usr/bin/php /var/www/fusionpbx/aws_s3/aws_check_and_get.php '.$row['xml_cdr_uuid'].' 1');
+                                                                //if ($cmd_output == 'Exist'){
+                                                                $content .= "   <td class='middle button center no-link no-wrap'>";
+                                                        if (permission_exists('xml_cdr_recording_play') && $row['record_name'] !=""  && $row['domain_name'] !="") {
+                                                                $content .=     "<audio id='recording_audio_".escape($row['xml_cdr_uuid'])."' style='display: none;' preload='none' ontimeupdate=\"update_progress('".escape($row['xml_cdr_uuid'])."')\" onended=\"recording_reset('".escape($row['xml_cdr_uuid'])."');\" src=\"download_aws.php?file_name=".urlencode($row['record_name'])."&domain_name=".urlencode($row['domain_name'])."&record_path=".urlencode($row['record_path'])."&t=record\" type='".escape($record_type)."'></audio>";
+                                                                $content .= button::create(['type'=>'button','title'=>$text['label-play'].' / '.$text['label-pause'],'icon'=>$_SESSION['theme']['button_icon_play'],'id'=>'recording_button_custom_'.escape($row['xml_cdr_uuid']),'onclick'=>"recording_play_custom('".escape($row['record_name'])."','".escape($row['domain_name'])."','".escape($row['xml_cdr_uuid'])."','".escape($row['record_path'])."')"]);
+                                                                $content .= button::create(['style'=>'display:none;','type'=>'button','title'=>$text['label-play'].' / '.$text['label-pause'],'icon'=>$_SESSION['theme']['button_icon_play'],'id'=>'recording_button_'.escape($row['xml_cdr_uuid']),'onclick'=>"recording_play('".escape($row['xml_cdr_uuid'])."')"]);
+                                                        }
+                                                                if (permission_exists('xml_cdr_recording_download') && $row['record_name'] !=""  && $row['domain_name'] !="") {
+                                                                        $content .= button::create(['type'=>'button','title'=>$text['label-download'],'icon'=>$_SESSION['theme']['button_icon_download'],'link'=>"download_aws.php?file_name=".urlencode($row['record_name'])."&domain_name=".urlencode($row['domain_name'])."&record_path=".urlencode($row['record_path'])."&t=bucket"]);
+                                                                $content .=     "\n";
+                                                                $content .=     "\nBucket\n";
+                                                                }
+
+                                                                $content .=     "</td>\n";
+//}else{
+//                                                              $content .= "   <td>&nbsp;</td>\n";
+//}
+                                                        }
+                                                        //HP:CHANGE_END_AWS
 						}
 					}
 				//custom cdr fields

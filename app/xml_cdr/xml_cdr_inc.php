@@ -232,6 +232,9 @@
 //get the results from the db
 	$sql = "select \n";
 	$sql .= "c.domain_uuid, \n";
+//HP:CHANGES_START_AWS
+        $sql .= "c.domain_name, \n";
+//HP:CHANGES_END_AWS
 	$sql .= "e.extension, \n";
 	$sql .= "c.start_stamp, \n";
 	$sql .= "c.end_stamp, \n";
@@ -286,6 +289,39 @@
 	$sql .= "inner join v_domains as d on d.domain_uuid = c.domain_uuid \n";
 	if ($_REQUEST['show'] == "all" && permission_exists('xml_cdr_all')) {
 		$sql .= "where true ";
+
+//HP:START		
+        if(!empty($_SESSION['groups']) && !if_group("superadmin")){
+                $group_uuid_str = "";
+                foreach($_SESSION['groups'] as $vals){
+                        $group_uuid_str .= "'".$vals['group_uuid']."',";
+                }
+                $group_uuid_str .= ",";
+                $final_group_uuid_str = str_replace(",,","",$group_uuid_str);
+                $sql_new = "select domain_uuids ";
+                $sql_new .= "from domain_permissions where group_uuid IN (".$final_group_uuid_str.")";
+                $database = new database;
+                $permission_result = $database->select($sql_new, $parameters, 'all');
+                if(!empty($permission_result)){
+                        $domain_uuid_str = "";
+                        foreach($permission_result as $vals){
+                                if($vals['domain_uuids'] != NULL){
+                                        $permission_arr = explode(",",$vals['domain_uuids']);
+                                        foreach($permission_arr as $sub_vals){
+                                                if($sub_vals != ""){
+                                                        $domain_uuid_str .= "'".$sub_vals."',";
+                                                }
+                                        }
+                                }
+                        }
+                        $domain_uuid_str .= ",";
+                        $final_domain_uuid_str = str_replace(",,","",$domain_uuid_str);
+                        $sql .= " and c.domain_uuid IN (".$final_domain_uuid_str.") ";
+                }
+                unset($sql_new, $parameters);
+        }
+//HP:END
+
 	}
 	else {
 		$sql .= "where c.domain_uuid = :domain_uuid \n";
