@@ -1,5 +1,5 @@
 <?php
-$BriaAccess = parse_ini_file('../../../briacredentials.ini');
+$BriaAccess = parse_ini_file('../../../envinfo.ini');
 
 ini_set('max_execution_time', 300); //300 seconds = 5 minutes
 
