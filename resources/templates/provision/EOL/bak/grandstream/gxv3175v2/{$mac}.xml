@@ -488,9 +488,7 @@
     <!--P281 -->
     <!--  Advanced Settings/ Call Features -->
     <!-- Always Ring SPeaker.  0 - No, 1 - Yes.  Default is 0. -->
-{if isset($grandstream_headset_ring)}
-    <P1439>{$grandstream_headset_ring}</P1439>
-{/if}
+    <P1439>0</P1439>
     <!-- Disable Call-Waiting. 0 - No, 1 - Yes -->
     <P91>0</P91>
     <!-- Disable Call-Waiting Tone. 0 - No (default), 1 - Yes -->

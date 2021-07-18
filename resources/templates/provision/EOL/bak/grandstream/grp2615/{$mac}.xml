@@ -7022,9 +7022,7 @@
     <!-- # Always Ring Speaker. 0 - No, 1 - Yes. Default is 0 -->
     <!-- # Number: 0, 1 -->
     <!-- # Mandatory -->
-{if isset($grandstream_headset_ring)}
-    <P1439>{$grandstream_headset_ring}</P1439>
-{/if}
+    <P1439>0</P1439>
 
     <!-- # Group Listen with Speaker. 0 - No, 1 - Yes. Default is 0 -->
     <!-- # Number: 0, 1 -->
