@@ -135,6 +135,7 @@ if (!class_exists('xml_cdr')) {
 
 			$this->fields[] = "xml_cdr_uuid";
 			$this->fields[] = "domain_uuid";
+			$this->fields[] = "provider_uuid";
 			$this->fields[] = "extension_uuid";
 			$this->fields[] = "sip_call_id";
 			$this->fields[] = "domain_name";
@@ -478,36 +479,37 @@ if (!class_exists('xml_cdr')) {
 							//marked as missed
 							$missed_call = $xml->variables->missed_call;
 						}
-						elseif (isset($xml->variables->fax_success)) {
+						if (isset($xml->variables->fax_success)) {
 							//fax server
 							$missed_call = 'false';
 						}
-						elseif ($xml->variables->hangup_cause == 'LOSE_RACE') {
+						if (isset($xml->variables->hangup_cause) && $xml->variables->hangup_cause == 'LOSE_RACE') {
 							//ring group or multi destination bridge statement
 							$missed_call = 'false';
 						}
-						elseif ($xml->variables->hangup_cause == 'NO_ANSWER' && isset($xml->variables->originating_leg_uuid)) {
+						if (isset($xml->variables->hangup_cause) && $xml->variables->hangup_cause == 'NO_ANSWER' && isset($xml->variables->originating_leg_uuid)) {
 							//ring group or multi destination bridge statement
 							$missed_call = 'false';
 						}
-						elseif (substr($xml->variables->destination_number, 0, 3) == '*99') {
+						if (isset($xml->variables->destination_number) && substr($xml->variables->destination_number, 0, 3) == '*99') {
 							//voicemail
 							$missed_call = 'true';
 						}
-						elseif (isset($xml->variables->voicemail_message) && $xml->variables->voicemail_message == true) {
+						if (isset($xml->variables->voicemail_message) && $xml->variables->voicemail_message == true) {
 							//voicemail
 							$missed_call = 'true';
 						}
-						elseif (isset($xml->variables->billsec) && $xml->variables->billsec > 0) {
+						if (isset($xml->variables->billsec) && $xml->variables->billsec > 0) {
 							//answered call
 							$missed_call = 'false';
 						}
-						elseif (isset($xml->variables->cc_side) && $xml->variables->cc_side == 'agent') {
+						if (isset($xml->variables->cc_side) && $xml->variables->cc_side == 'agent') {
 							//call center
 							$missed_call = 'false';
 						}
-						else {
-							//missed call
+						if (isset($xml->variables->cc_side) && $xml->variables->cc_side == 'member'
+							&& isset($xml->variables->cc_cause) && $xml->variables->cc_cause == 'cancel') {
+							//call center
 							$missed_call = 'true';
 						}
 
@@ -577,6 +579,20 @@ if (!class_exists('xml_cdr')) {
 						}
 						if (in_array($xml->variables->hangup_cause, $failed_array)) {
 							$status = 'failed';
+						}
+						if (!isset($status) && in_array($xml->variables->last_bridge_hangup_cause, $failed_array)) {
+							$status = 'failed';
+						}
+						if ($xml->variables->cc_side == 'agent' && $xml->variables->billsec == 0) {
+							$status = 'no_answer';
+						}
+						if (!isset($status)  && $xml->variables->billsec == 0) {
+							$status = 'no_answer';
+						}
+
+					//set the provider id
+						if (isset($xml->variables->provider_uuid)) {
+							$this->array[$key]['provider_uuid'] = urldecode($xml->variables->provider_uuid);
 						}
 
 					//misc
@@ -1043,10 +1059,10 @@ if (!class_exists('xml_cdr')) {
 			$destination = new destinations;
 			$destination_array = $destination->get('dialplan');
 
-			//add new rows when callee_id_number exists 
+			//add new rows when callee_id_number exists
 			$new_rows = 0;
 			foreach ($call_flow_array as $key => $row) {
-				if (!empty($row["caller_profile"]["destination_number"]) 
+				if (!empty($row["caller_profile"]["destination_number"])
 					and !empty($row["caller_profile"]["callee_id_number"])
 					and $row["caller_profile"]["destination_number"] !== $row["caller_profile"]["callee_id_number"]) {
 						//build the base of the new_row array
@@ -1174,9 +1190,9 @@ if (!class_exists('xml_cdr')) {
 					}
 
 					//valet park
-					if (!empty($row["caller_profile"]["destination_number"]) 
+					if (!empty($row["caller_profile"]["destination_number"])
 						and (substr($row["caller_profile"]["destination_number"], 0, 4) == 'park'
-						or (substr($row["caller_profile"]["destination_number"], 0, 3) == '*59' 
+						or (substr($row["caller_profile"]["destination_number"], 0, 3) == '*59'
 						and strlen($row["caller_profile"]["destination_number"]) == 5))) {
 						//add items to the app array
 						$app['application'] = 'dialplans';
@@ -1209,7 +1225,7 @@ if (!class_exists('xml_cdr')) {
 					}
 
 					//debug - add the callee_id_number to the end of the status
-					if (isset($_REQUEST['debug']) && $_REQUEST['debug'] == 'true' && !empty($row["caller_profile"]["destination_number"]) 
+					if (isset($_REQUEST['debug']) && $_REQUEST['debug'] == 'true' && !empty($row["caller_profile"]["destination_number"])
 						and !empty($row["caller_profile"]["callee_id_number"])
 						and $row["caller_profile"]["destination_number"] !== $row["caller_profile"]["callee_id_number"]) {
 							$app['status'] .= ' ('.$row["caller_profile"]["callee_id_number"].')';
@@ -1301,7 +1317,7 @@ if (!class_exists('xml_cdr')) {
 							if ($application == 'destinations') {
 								if ('+'.$value['destination_prefix'].$value['destination_number'] == $detail_action
 									or $value['destination_prefix'].$value['destination_number'] == $detail_action
-									or $value['destination_number'] == $detail_action 
+									or $value['destination_number'] == $detail_action
 									or $value['destination_trunk_prefix'].$value['destination_number'] == $detail_action
 									or '+'.$value['destination_prefix'].$value['destination_area_code'].$value['destination_number'] == $detail_action
 									or $value['destination_prefix'].$value['destination_area_code'].$value['destination_number'] == $detail_action
@@ -1985,3 +2001,4 @@ if (!class_exists('xml_cdr')) {
 }
 
 ?>
+

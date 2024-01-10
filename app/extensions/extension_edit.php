@@ -780,8 +780,8 @@
 
 				//reload acl if allowed
 					if (permission_exists("extension_cidr")) {
-						$fp = event_socket_create();
-						if ($fp) { event_socket_request($fp, "api reloadacl"); }
+						$esl = event_socket::create();
+						if ($esl->is_connected()) { event_socket::api("reloadacl"); }
 					}
 
 				//check the permissions
@@ -930,11 +930,13 @@
 	$sql = "select d.device_address, d.device_template, d.device_description, l.device_line_uuid, l.device_uuid, l.line_number ";
 	$sql .= "from v_device_lines as l, v_devices as d ";
 	$sql .= "where (l.user_id = :user_id_1 or l.user_id = :user_id_2)";
+	$sql .= "and l.password = :password ";
 	$sql .= "and l.domain_uuid = :domain_uuid ";
 	$sql .= "and l.device_uuid = d.device_uuid ";
 	$sql .= "order by l.line_number, d.device_address asc ";
 	$parameters['user_id_1'] = $extension ?? null;
 	$parameters['user_id_2'] = $number_alias ?? null;
+	$parameters['password'] = $password ?? null;
 	$parameters['domain_uuid'] = $domain_uuid;
 	$database = new database;
 	$device_lines = $database->select($sql, $parameters, 'all');
