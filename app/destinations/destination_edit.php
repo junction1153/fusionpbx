@@ -382,6 +382,10 @@
 						foreach($destination_numbers as $destination_number) {
 
 							//convert the number to a regular expression
+//JA
+if (strlen($destination_prefix) == 0 && strlen($destination_number) == 10) { $destination_prefix = '1'; }
+//JA
+
 								if (isset($destination_prefix) && !empty($destination_prefix)) {
 									$destination_numbers['destination_prefix'] = $destination_prefix;
 								}
@@ -795,6 +799,7 @@ if (strpos($destination_type_fax, '1') !== false) {
 													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
 													$y++;
 													$dialplan_detail_order = $dialplan_detail_order + 10;
+												}
 
 									//set the call carrier
 										if (!empty($destination_carrier)) {

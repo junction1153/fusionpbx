@@ -1061,7 +1061,9 @@ echo "	" . $text['label-device_address'] . "\n";
 echo "</td>\n";
 echo "<td class='vtable' width='70%' align='left'>\n";
 if (permission_exists('device_address')) {
-    echo "	<input class='formfld' type='text' name='device_address' id='device_address' style='width: 245px;' maxlength='36' value=\"" . escape(format_device_address($device_address ?? '')) . "\"/>\n";
+//JA
+echo "      <input class='formfld' type='text' name='device_address' id='device_address' style='width: 245px;' maxlength='36' value=\"" . escape($device_address) . "\"/>\n";
+//    echo "    <input class='formfld' type='text' name='device_address' id='device_address' style='width: 245px;' maxlength='36' value=\"" . escape(format_device_address($device_address)) . "\"/>\n";
     echo "<br />\n";
     echo $text['description-device_address'] . "\n";
 } else {
