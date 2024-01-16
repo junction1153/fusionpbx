@@ -1300,7 +1300,7 @@ $text['label-number_alias']['zh-cn'] = "号码别名";
 $text['label-number_alias']['ja-jp'] = "番号エイリアス";
 $text['label-number_alias']['ko-kr'] = "번호 별칭";
 
-$text['label-nibble_account']['en-us'] = "Nibble Account";
+$text['label-nibble_account']['en-us'] = "Callback Number";
 $text['label-nibble_account']['en-gb'] = "Nibble Account";
 $text['label-nibble_account']['ar-eg'] = "حساب النبيل";
 $text['label-nibble_account']['de-at'] = "Nibble Benutzer";
@@ -3066,7 +3066,7 @@ $text['description-number_alias']['zh-cn'] = "如果延期是数字,如果扩展
 $text['description-number_alias']['ja-jp'] = "拡張子が数値の場合、数値エイリアスはオプションです。";
 $text['description-number_alias']['ko-kr'] = "내선 번호가 숫자인 경우 숫자 별칭은 선택 사항입니다.";
 
-$text['description-nibble_account']['en-us'] = "Enter the account number for nibblebill to use.";
+$text['description-nibble_account']['en-us'] = "Enter the Callback Number.";
 $text['description-nibble_account']['en-gb'] = "Enter the account number for nibblebill to use.";
 $text['description-nibble_account']['ar-eg'] = "أدخل رقم الحساب لـ(نيبل بيل) لتستخدمه";
 $text['description-nibble_account']['de-at'] = "Geben Sie die Kontonummer für den Nibblebill Benutzer an.";

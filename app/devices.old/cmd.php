@@ -69,7 +69,7 @@
 	if ($esl->is_connected()) {
 		// Get the SIP profiles for the user
 		$command = "sofia_contact */{$user}@{$domain_name}";
-		$contact_string = event_socket_request($fp, "api ".$command);
+		$contact_string = event_socket::api($command);
 
 		// The first value in the array will be full matching text, the second one will be the array of profile matches
 		preg_match_all('/sofia\/([^,]+)\/(?:[^,]+)/', $contact_string, $matches);
@@ -105,7 +105,6 @@
 			//show the response
 			message::add($text['label-event']." ".$message, 'positive', 3500);
 		}
-
 	}
 
 //redirect the user

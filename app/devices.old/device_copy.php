@@ -79,23 +79,6 @@
 	$devices = $database->select($sql, $parameters, 'all');
 	unset($sql, $parameters);
 
-//copy sip device in polycom
-if(isset($devices[0]["ztp_reference_id"]) && !empty($devices[0]["ztp_reference_id"])){
-	$old_mac_address = $devices[0]["device_address"];
-	$ztp_device_response = device::copy_ZTP_profile($devices[0]["ztp_reference_id"],$old_mac_address,$device_address);
-
-				
-	// echo "<pre>";
-	// print_r($ztp_device_response);exit;
-	if($ztp_device_response['status'] == "Error"){
-		$save = false;
-		message::add($ztp_device_response['message'],'negative');
-	
-	} else {
-		$devices[0]["ztp_reference_id"] = $ztp_device_response['ztp_reference_id'];
-	}
-}
-
 //get device lines
 	$sql = "select * from v_device_lines ";
 	$sql .= "where device_uuid = :device_uuid ";

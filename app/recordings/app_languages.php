@@ -480,7 +480,7 @@ $text['description-file']['zh-cn'] = "文件的名称。 例子.wav";
 $text['description-file']['ja-jp'] = "ファイルの名前。 たとえば .wav";
 $text['description-file']['ko-kr'] = "파일의 이름입니다. example.wav";
 
-$text['description']['en-us'] = "Dial *732 to create a recording, or (for best results) upload a 16bit 8khz/16khz mono WAV file.";
+$text['description']['en-us'] = "Dial *31 to create a recording, or upload a 16bit 8khz/16khz mono WAV file. NOTE: Any other format will not properly function.";
 $text['description']['en-gb'] = "Dial *732 to create a recording, or (for best results) upload a 16bit 8khz/16khz mono WAV file.";
 $text['description']['ar-eg'] = "الهاتف *732 لخلق تسجيل، أو (لأفضل النتائج) تحميل 16بتة 8khz/16khz Un wav ملف.";
 $text['description']['de-at'] = "Wählen Sie *732 um eine Aufnahme direkt vom Telefon zu starten oder laden Sie eine 16bit 8/16kHz mono WAV-Datei hoch.";

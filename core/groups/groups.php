@@ -205,6 +205,10 @@
 	if (permission_exists('group_edit') && $list_row_edit_button == 'true') {
 		echo "	<td class='action-button'>&nbsp;</td>\n";
 	}
+//HP:START
+                echo th_order_by('group_protected', "Domain Permissions", $order_by, $order, null, "class='center'");
+//HP:END
+
 	echo "</tr>\n";
 
 	if (is_array($groups) && @sizeof($groups) != 0) {
@@ -249,6 +253,26 @@ echo "	<td>".escape($row['domain_name'])."</td>\n";
 				echo button::create(['type'=>'button','title'=>$text['button-edit'],'icon'=>$_SESSION['theme']['button_icon_edit'],'link'=>$list_row_url]);
 				echo "	</td>\n";
 			}
+			
+//HP:START
+                        $sql = "select count(group_uuid) from domain_permissions ";
+                        $sql .= "where group_uuid='".$row['group_uuid']."'";
+                        $database = new database;
+                        $domain_permissions_num_rows = $database->select($sql, $parameters, 'column');
+                        if($domain_permissions_num_rows > 0){
+                                $sql = "select domain_uuids ";
+                                $sql .= "from domain_permissions where group_uuid='".$row['group_uuid']."'";
+                                $database = new database;
+                                $permission_result = $database->select($sql, $parameters, 'all');
+                                unset($sql, $parameters);
+                                if($permission_result[0]['domain_uuids'] != NULL){
+                                        $domain_permissions_num_rows = count(explode(",",$permission_result[0]['domain_uuids']));
+                                }else{
+                                        $domain_permissions_num_rows = 0;
+                                }
+                        }
+                        echo "  <td class='no-link no-wrap'><a href='domain_permissions.php?group_uuid=".urlencode($row['group_uuid'])."'>Domain Permission(".$domain_permissions_num_rows.")</a></td>\n";
+//HP:END
 			echo "</tr>\n";
 			$x++;
 		}

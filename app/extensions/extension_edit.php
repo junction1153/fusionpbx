@@ -1173,6 +1173,22 @@
 		echo "</tr>\n";
 	}
 
+//JA No Password Permission
+if (!permission_exists('extension_password') && $action == "update") {
+
+	echo "<tr>\n";
+	echo "<td class='vncellreq' valign='top' align='left' nowrap='nowrap'>\n";
+	echo "    ".$text['label-password']."\n";
+	echo "</td>\n";
+	echo "<td class='vtable' align='left'>\n";
+	echo "    <input type='hidden' style='display: none;' disabled='disabled'>\n"; //help defeat browser auto-fill
+	echo "    <input class='formfld' type='hidden' name='password' id='password' autocomplete='new-password' onmouseover=\"this.type='text';\" onfocus=\"this.type='text';\" onmouseout=\"if (!$(this).is(':focus')) { this.type='password'; }\" onblur=\"this.type='password';\" maxlength='50' value=\"".escape($password ?? '')."\">\n";
+	echo "    <br />\n";
+	echo "    ".$text['description-password']."\n";
+	echo "</td>\n";
+	echo "</tr>\n";
+}
+
 	if ($action == "add") {
 		echo "<tr>\n";
 		echo "<td class='vncell' valign='top' align='left' nowrap='nowrap'>\n";

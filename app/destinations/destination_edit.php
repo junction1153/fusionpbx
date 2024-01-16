@@ -515,6 +515,16 @@
 								if (!empty($destination_cid_name_prefix)) {
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"effective_caller_id_name=".xml::sanitize($destination_cid_name_prefix)."#\${caller_id_name}\" inline=\"false\"/>\n";
 								}
+
+//JA start
+if (strpos($destination_type_fax, '1') !== false) {
+	$dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38_request=true\"/>\n";
+	$dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38=true\"/>\n";
+	$dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_use_ecm=true\"/>\n";
+	$dialplan["dialplan_xml"] .= "          <action application=\"set\" data=\"inbound-proxy-media=true\"/>\n";
+}
+//JA end
+
 								if (!empty($destination_record) && $destination_record == 'true') {
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"record_path=\${recordings_dir}/\${domain_name}/archive/\${strftime(%Y)}/\${strftime(%b)}/\${strftime(%d)}\" inline=\"true\"/>\n";
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"record_name=\${uuid}.\${record_ext}\" inline=\"true\"/>\n";
@@ -746,6 +756,45 @@
 											//increment the dialplan detail order
 											$dialplan_detail_order = $dialplan_detail_order + 10;
 										}
+
+                                                //JA add t38
+												if (strlen($destination_type_fax) > 0) {
+													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_enable_t38=true";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
+
+													$y++;
+													$dialplan_detail_order = $dialplan_detail_order + 10;
+
+													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_enable_t38_request=true";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
+													$y++;
+													$dialplan_detail_order = $dialplan_detail_order + 10;
+
+													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_use_ecm=true";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
+													$y++;
+													$dialplan_detail_order = $dialplan_detail_order + 10;
+
+													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "inbound-proxy-media=true";
+													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
+													$y++;
+													$dialplan_detail_order = $dialplan_detail_order + 10;
 
 									//set the call carrier
 										if (!empty($destination_carrier)) {
@@ -1872,7 +1921,7 @@
 	echo "	".$text['label-usage']."\n";
 	echo "</td>\n";
 	echo "<td class='vtable' align='left'>\n";
-	echo "	<label><input type='checkbox' name='destination_type_voice' id='destination_type_voice' value='1' ".($destination_type_voice ? "checked='checked'" : null)."> ".$text['label-voice']."</label>&nbsp;\n";
+	echo "	<label><input type='checkbox' name='destination_type_voice' id='destination_type_voice' value='1' checked ".($destination_type_voice ? "checked='checked'" : null)."> ".$text['label-voice']."</label>&nbsp;\n";
 	echo "	<label><input type='checkbox' name='destination_type_fax' id='destination_type_fax' value='1' ".($destination_type_fax ? "checked='checked'" : null)."> ".$text['label-fax']."</label>&nbsp;\n";
 	echo "	<label><input type='checkbox' name='destination_type_text' id='destination_type_text' value='1' ".($destination_type_text ? "checked='checked'" : null)."> ".$text['label-text']."</label>&nbsp;\n";
 	if (permission_exists('destination_emergency')){
