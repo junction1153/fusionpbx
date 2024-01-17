@@ -382,10 +382,6 @@
 						foreach($destination_numbers as $destination_number) {
 
 							//convert the number to a regular expression
-//JA
-if (strlen($destination_prefix) == 0 && strlen($destination_number) == 10) { $destination_prefix = '1'; }
-//JA
-
 								if (isset($destination_prefix) && !empty($destination_prefix)) {
 									$destination_numbers['destination_prefix'] = $destination_prefix;
 								}
@@ -512,23 +508,14 @@ if (strlen($destination_prefix) == 0 && strlen($destination_number) == 10) { $de
 
 								//add this only if using application bridge
 								if (!empty($destination_app) && $destination_app == 'bridge') {
+										$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"presence_id=\$1@".$_SESSION['domain_name']."\" inline=\"true\"/>\n";
 										$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"hangup_after_bridge=true\" inline=\"true\"/>\n";
 										$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"continue_on_fail=true\" inline=\"true\"/>\n";
 								}
 
 								if (!empty($destination_cid_name_prefix)) {
-									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"effective_caller_id_name=".xml::sanitize($destination_cid_name_prefix)."#\${caller_id_name}\" inline=\"false\"/>\n";
+									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"effective_caller_id_name=".xml::sanitize($destination_cid_name_prefix)."#\${caller_id_name}\" inline=\"true\"/>\n";
 								}
-
-//JA start
-if (strpos($destination_type_fax, '1') !== false) {
-	$dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38_request=true\"/>\n";
-	$dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_enable_t38=true\"/>\n";
-	$dialplan["dialplan_xml"] .= "          <action application=\"export\" data=\"fax_use_ecm=true\"/>\n";
-	$dialplan["dialplan_xml"] .= "          <action application=\"set\" data=\"inbound-proxy-media=true\"/>\n";
-}
-//JA end
-
 								if (!empty($destination_record) && $destination_record == 'true') {
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"record_path=\${recordings_dir}/\${domain_name}/archive/\${strftime(%Y)}/\${strftime(%b)}/\${strftime(%d)}\" inline=\"true\"/>\n";
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"record_name=\${uuid}.\${record_ext}\" inline=\"true\"/>\n";
@@ -550,6 +537,7 @@ if (strpos($destination_type_fax, '1') !== false) {
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"carrier=".xml::sanitize($destination_carrier)."\" inline=\"true\"/>\n";
 								}
 								if (!empty($fax_uuid)) {
+									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"presence_id=\$1@".$_SESSION['domain_name']."\" inline=\"true\"/>\n";
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"tone_detect_hits=1\" inline=\"true\"/>\n";
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"execute_on_tone_detect=transfer ".xml::sanitize($fax_extension)." XML \${domain_name}\" inline=\"true\"/>\n";
 									$dialplan["dialplan_xml"] .= "		<action application=\"tone_detect\" data=\"fax 1100 r +3000\"/>\n";
@@ -700,6 +688,17 @@ if (strpos($destination_type_fax, '1') !== false) {
 
 									//add this only if using application bridge
 										if (!empty($destination_app) && $destination_app == 'bridge') {
+											//add presence_id
+												$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+												$dialplan["dialplan_details"][$y]["dialplan_uuid"] = $dialplan_uuid;
+												$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+												$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
+												$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "presence_id=\$1@".$_SESSION['domain_name'];
+												$dialplan["dialplan_details"][$y]["dialplan_detail_inline"] = "true";
+												$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
+												$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+												$y++;
+
 											//add hangup_after_bridge
 												$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
 												$dialplan["dialplan_details"][$y]["dialplan_uuid"] = $dialplan_uuid;
@@ -736,7 +735,7 @@ if (strpos($destination_type_fax, '1') !== false) {
 											$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
 											$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
 											$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "effective_caller_id_name=".$destination_cid_name_prefix."#\${caller_id_name}";
-											$dialplan["dialplan_details"][$y]["dialplan_detail_inline"] = "false";
+											$dialplan["dialplan_details"][$y]["dialplan_detail_inline"] = "true";
 											$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
 											$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
 											$y++;
@@ -760,46 +759,6 @@ if (strpos($destination_type_fax, '1') !== false) {
 											//increment the dialplan detail order
 											$dialplan_detail_order = $dialplan_detail_order + 10;
 										}
-
-                                                //JA add t38
-												if (strlen($destination_type_fax) > 0) {
-													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_enable_t38=true";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
-
-													$y++;
-													$dialplan_detail_order = $dialplan_detail_order + 10;
-
-													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_enable_t38_request=true";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
-													$y++;
-													$dialplan_detail_order = $dialplan_detail_order + 10;
-
-													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "export";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "fax_use_ecm=true";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
-													$y++;
-													$dialplan_detail_order = $dialplan_detail_order + 10;
-
-													$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "inbound-proxy-media=true";
-													$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
-													$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
-													$y++;
-													$dialplan_detail_order = $dialplan_detail_order + 10;
-												}
 
 									//set the call carrier
 										if (!empty($destination_carrier)) {
@@ -851,6 +810,17 @@ if (strpos($destination_type_fax, '1') !== false) {
 
 									//add fax detection
 										if (is_uuid($fax_uuid)) {
+
+											//add presence_id
+												$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
+												$dialplan["dialplan_details"][$y]["dialplan_uuid"] = $dialplan_uuid;
+												$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
+												$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
+												$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "presence_id=\$1@".$_SESSION['domain_name'];
+												$dialplan["dialplan_details"][$y]["dialplan_detail_inline"] = "true";
+												$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
+												$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
+												$y++;
 
 											//add set tone detect_hits=1
 												$dialplan["dialplan_details"][$y]["domain_uuid"] = $domain_uuid;
@@ -1926,7 +1896,7 @@ if (strpos($destination_type_fax, '1') !== false) {
 	echo "	".$text['label-usage']."\n";
 	echo "</td>\n";
 	echo "<td class='vtable' align='left'>\n";
-	echo "	<label><input type='checkbox' name='destination_type_voice' id='destination_type_voice' value='1' checked ".($destination_type_voice ? "checked='checked'" : null)."> ".$text['label-voice']."</label>&nbsp;\n";
+	echo "	<label><input type='checkbox' name='destination_type_voice' id='destination_type_voice' value='1' ".($destination_type_voice ? "checked='checked'" : null)."> ".$text['label-voice']."</label>&nbsp;\n";
 	echo "	<label><input type='checkbox' name='destination_type_fax' id='destination_type_fax' value='1' ".($destination_type_fax ? "checked='checked'" : null)."> ".$text['label-fax']."</label>&nbsp;\n";
 	echo "	<label><input type='checkbox' name='destination_type_text' id='destination_type_text' value='1' ".($destination_type_text ? "checked='checked'" : null)."> ".$text['label-text']."</label>&nbsp;\n";
 	if (permission_exists('destination_emergency')){
@@ -2060,4 +2030,3 @@ if (strpos($destination_type_fax, '1') !== false) {
 	require_once "resources/footer.php";
 
 ?>
-
