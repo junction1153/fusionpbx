@@ -87,8 +87,11 @@ class event_socket {
 				if ($line === '') {
 					break;
 				}
-				list($key, $value) = explode(':', $line, 2);
-				$content[trim($key)] = trim($value);
+				$exploded_line = explode(':', $line, 2);
+				if (count($exploded_line) >= 2) {
+					list($key, $value) = $exploded_line;
+					$content[trim($key)] = trim($value);
+				}
 			}
 
 			if (feof($this->fp)) {
