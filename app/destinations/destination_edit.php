@@ -382,6 +382,11 @@
 						foreach($destination_numbers as $destination_number) {
 
 							//convert the number to a regular expression
+
+//JA
+if (strlen($destination_prefix) == 0 && strlen($destination_number) == 10) { $destination_prefix = '1'; }
+//JA
+
 								if (isset($destination_prefix) && !empty($destination_prefix)) {
 									$destination_numbers['destination_prefix'] = $destination_prefix;
 								}
