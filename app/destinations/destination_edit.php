@@ -514,8 +514,11 @@
 								}
 
 								if (!empty($destination_cid_name_prefix)) {
-									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"effective_caller_id_name=".xml::sanitize($destination_cid_name_prefix)."#\${caller_id_name}\" inline=\"true\"/>\n";
-								}
+//									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"effective_caller_id_name=".xml::sanitize($destination_cid_name_prefix)."#\${caller_id_name}\" inline=\"true\"/>\n";
+//JA
+									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"pfx_effective_caller_id_name=".xml::sanitize($destination_cid_name_prefix)."#\${pfx_effective_caller_id_name}\" inline=\"true\"/>\n";
+//JA
+}
 								if (!empty($destination_record) && $destination_record == 'true') {
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"record_path=\${recordings_dir}/\${domain_name}/archive/\${strftime(%Y)}/\${strftime(%b)}/\${strftime(%d)}\" inline=\"true\"/>\n";
 									$dialplan["dialplan_xml"] .= "		<action application=\"set\" data=\"record_name=\${uuid}.\${record_ext}\" inline=\"true\"/>\n";
@@ -734,7 +737,10 @@
 											$dialplan["dialplan_details"][$y]["dialplan_uuid"] = $dialplan_uuid;
 											$dialplan["dialplan_details"][$y]["dialplan_detail_tag"] = "action";
 											$dialplan["dialplan_details"][$y]["dialplan_detail_type"] = "set";
-											$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "effective_caller_id_name=".$destination_cid_name_prefix."#\${caller_id_name}";
+//											$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "effective_caller_id_name=".$destination_cid_name_prefix."#\${caller_id_name}";
+//JA
+											$dialplan["dialplan_details"][$y]["dialplan_detail_data"] = "pfx_effective_caller_id_name=".$destination_cid_name_prefix."#";
+//JA
 											$dialplan["dialplan_details"][$y]["dialplan_detail_inline"] = "true";
 											$dialplan["dialplan_details"][$y]["dialplan_detail_group"] = $dialplan_detail_group;
 											$dialplan["dialplan_details"][$y]["dialplan_detail_order"] = $dialplan_detail_order;
