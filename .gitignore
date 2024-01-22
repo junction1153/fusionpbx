@@ -12,6 +12,7 @@ app/provision/upload*
 .stignore
 envinfo.ini
 storage/logs/*
+app/switch/resources/scripts/cidlookup_custom.lua
 
 *.php~
 
