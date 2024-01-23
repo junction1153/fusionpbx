@@ -137,6 +137,7 @@
 							$i++;
 						}
 					}
+					unset($row);
 				}
 			}
 	}
@@ -270,7 +271,7 @@
 					$destination_caller_id_number = $row["destination_caller_id_number"] ?? null;
 				}
 				if (!permission_exists('destination_context')) {
-					$destination_context = $row["destination_context"] ?? null;
+					$destination_context = $row["destination_context"] ?? 'public';
 				}
 				if (!permission_exists('destination_fax')) {
 					$fax_uuid = $row["fax_uuid"] ?? null;
