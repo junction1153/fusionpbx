@@ -912,7 +912,7 @@ $text['label-day-of-month']['zh-cn'] = "月中日";
 $text['label-day-of-month']['ja-jp'] = "月の日";
 $text['label-day-of-month']['ko-kr'] = "달의 날";
 
-$text['label-date-and-time']['en-us'] = "Date & Time";
+$text['label-date-and-time']['en-us'] = "Date & Time **Must Use UTC**";
 $text['label-date-and-time']['en-gb'] = "Date & Time";
 $text['label-date-and-time']['ar-eg'] = "التاريخ والوقت";
 $text['label-date-and-time']['de-at'] = "Datum & Zeit";
