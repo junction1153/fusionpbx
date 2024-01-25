@@ -351,7 +351,8 @@
 			}
 
 		//add definable export variables can be set in default settings
-			$export_variables = 'call_center_queue_uuid,sip_h_Alert-Info';
+//			$export_variables = 'call_center_queue_uuid,sip_h_Alert-Info';
+			$export_variables = 'call_center_queue_uuid,sip_h_Alert-Info,absolute_codec_string'; //JA
 			if (!empty($_SESSION['call_center']['export_vars'])) {
 				foreach ($_SESSION['call_center']['export_vars'] as $export_variable) {
 				    $export_variables .= ','.$export_variable;
