@@ -204,8 +204,8 @@ if (!empty($_POST) && empty($_POST["persistformvar"])) {
 
                 foreach ($device_lines as $row) {
 
-$custom_jcc_tls_ports = array("5182","5178","5192","5185","5172","5198","5175","5186");
-$custom_jcc_udp_ports = array("5180","5176","5190","5184","5170","5196","5174","5187");
+$custom_jcc_tls_ports = array("5182","5178","5192","5185","5172","5198","5175","5187");
+$custom_jcc_udp_ports = array("5180","5176","5190","5184","5170","5196","5174","5186");
 
 if ($row['sip_transport'] == "tcp" && !in_array($row['sip_port'], $custom_jcc_udp_ports)) { $msg .= "ERROR: Please associate correct port with transport<br>\n"; }
 if ($row['sip_transport'] == "tls" && !in_array($row['sip_port'], $custom_jcc_tls_ports)) { $msg .= "ERROR: Please associate correct port with transport<br>\n"; }
