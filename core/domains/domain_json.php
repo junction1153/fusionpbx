@@ -78,59 +78,59 @@
 	}
 	
 //HP:START
-        unset($domains);
-        $domains= array();
-        unset($_SESSION['domains']);
-        $domain_sql = "select domain_uuid, domain_name, cast(domain_enabled as text), domain_description ";
-        $domain_sql .= "from v_domains ";
-        $domain_sql .= "where 1=1 ";
-        $key = 1;// array_search('superadmin', array_column($_SESSION['groups'], 'group_name'));
-        if(!empty($_SESSION['groups']) && !if_group("superadmin")){
-                $group_uuid_str = "";
-                foreach($_SESSION['groups'] as $vals){
-                        $group_uuid_str .= "'".$vals['group_uuid']."',";
-                }
-                $group_uuid_str .= ",";
-                $final_group_uuid_str = str_replace(",,","",$group_uuid_str);
-                $sql_new = "select domain_uuids ";
-                $sql_new .= "from domain_permissions where group_uuid IN (".$final_group_uuid_str.")";
-                $database = new database;
-                $permission_result = $database->select($sql_new, $parameters, 'all');
-                if(!empty($permission_result)){
-                        $domain_uuid_str = "";
-                        foreach($permission_result as $vals){
-                                if($vals['domain_uuids'] != NULL){
-                                        $permission_arr = explode(",",$vals['domain_uuids']);
-                                        foreach($permission_arr as $sub_vals){
-                                                if($sub_vals != ""){
-                                                        $domain_uuid_str .= "'".$sub_vals."',";
-                                                }
-                                        }
-                                }
-                        }
-                        $domain_uuid_str .= ",";
-                        $final_domain_uuid_str = str_replace(",,","",$domain_uuid_str);
-                        $domain_sql .= " and domain_uuid IN (".$final_domain_uuid_str.") ";
-                }
-                unset($sql_new, $parameters);
-        }
-                        if($search != ''){
-                                $domain_sql .= " and ( domain_name like '%".$search."%'";
-                                $domain_sql .= " or lower(domain_description) like '%".$search."%' ) ";
-
-                        }
-
-        $database = new database;
-        $parameters = array();
-        $domains = $database->select($domain_sql, $parameters, 'all');
-        if(!empty($domains)){
-                foreach($domains as $key=> $value)
-                $_SESSION['domains'][$value['domain_uuid']] = $value;
-        }else{
-                $_SESSION['domains'] = array();
-        }
-        unset($domain_sql, $parameters);
-
+//        unset($domains);
+//        $domains= array();
+//        unset($_SESSION['domains']);
+//        $domain_sql = "select domain_uuid, domain_name, cast(domain_enabled as text), domain_description ";
+//        $domain_sql .= "from v_domains ";
+//        $domain_sql .= "where 1=1 ";
+//        $key = 1;// array_search('superadmin', array_column($_SESSION['groups'], 'group_name'));
+//        if(!empty($_SESSION['groups']) && !if_group("superadmin")){
+//                $group_uuid_str = "";
+//                foreach($_SESSION['groups'] as $vals){
+//                        $group_uuid_str .= "'".$vals['group_uuid']."',";
+//                }
+//                $group_uuid_str .= ",";
+//                $final_group_uuid_str = str_replace(",,","",$group_uuid_str);
+//                $sql_new = "select domain_uuids ";
+//                $sql_new .= "from domain_permissions where group_uuid IN (".$final_group_uuid_str.")";
+//                $database = new database;
+//                $permission_result = $database->select($sql_new, $parameters, 'all');
+//                if(!empty($permission_result)){
+//                        $domain_uuid_str = "";
+//                        foreach($permission_result as $vals){
+//                                if($vals['domain_uuids'] != NULL){
+//                                        $permission_arr = explode(",",$vals['domain_uuids']);
+//                                        foreach($permission_arr as $sub_vals){
+//                                                if($sub_vals != ""){
+//                                                        $domain_uuid_str .= "'".$sub_vals."',";
+//                                                }
+//                                        }
+//                                }
+//                        }
+//                        $domain_uuid_str .= ",";
+//                        $final_domain_uuid_str = str_replace(",,","",$domain_uuid_str);
+//                        $domain_sql .= " and domain_uuid IN (".$final_domain_uuid_str.") ";
+//                }
+//                unset($sql_new, $parameters);
+//        }
+//                        if($search != ''){
+//                                $domain_sql .= " and ( domain_name like '%".$search."%'";
+//                                $domain_sql .= " or lower(domain_description) like '%".$search."%' ) ";
+//
+//                        }
+//
+//        $database = new database;
+//        $parameters = array();
+//        $domains = $database->select($domain_sql, $parameters, 'all');
+//        if(!empty($domains)){
+//                foreach($domains as $key=> $value)
+//                $_SESSION['domains'][$value['domain_uuid']] = $value;
+//        }else{
+//                $_SESSION['domains'] = array();
+//        }
+//        unset($domain_sql, $parameters);
+//
 //HP:END
 
 
