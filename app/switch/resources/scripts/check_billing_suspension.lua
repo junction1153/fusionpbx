@@ -31,21 +31,21 @@ if response then
                 session:execute("playback", "silence_stream://1000")
             end
             if session:ready() then
-                session:streamFile("ivr/ivr-phone_not_make_external_calls.wav")
+                session:streamFile("misc/suspended")
             end
-            if session:ready() then
-                session:streamFile("ivr/ivr-please_contact.wav")
-            end
-            if session:ready() then
-                session:streamFile("ivr/ivr-the_billing_department.wav")
-            end
-            if session:ready() then
-                session:streamFile("currency/and.wav")
-            end
-
-            if session:ready() then
-                session:streamFile("ivr/ivr-speak_to_a_customer_service_representative.wav")
-            end
+--            if session:ready() then
+--                session:streamFile("ivr/ivr-please_contact.wav")
+--            end
+--            if session:ready() then
+--                session:streamFile("ivr/ivr-the_billing_department.wav")
+--            end
+--            if session:ready() then
+--                session:streamFile("currency/and.wav")
+--            end
+--
+--            if session:ready() then
+--                session:streamFile("ivr/ivr-speak_to_a_customer_service_representative.wav")
+--            end
 
             if session:ready() then
                 session:sleep(1000) -- Wait for 1 second (1000 milliseconds)
@@ -59,9 +59,13 @@ if response then
             if session:ready() then
                 session:execute("playback", "silence_stream://1000")
             end
-            if session:ready() then
-                session:streamFile("ivr/ivr-please_contact.wav")
-            end
+        if session:ready() then
+            session:streamFile("ivr/ivr-call_cannot_be_completed_as_dialed.wav")
+        end
+        if session:ready() then
+            session:streamFile("ivr/ivr-please_check_number_try_again")
+        end
+
             session:hangup("CALL_REJECTED")
         end
 
