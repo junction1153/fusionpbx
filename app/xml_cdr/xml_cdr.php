@@ -30,7 +30,7 @@
 	require_once "resources/check_auth.php";
 	require_once "resources/paging.php";
 	
-require 'resources/classes/aws/aws-autoloader.php';
+//require 'resources/classes/aws/aws-autoloader.php';
 
 use Aws\S3\S3Client;
 use Aws\Common\Enum\Region;
