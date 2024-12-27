@@ -726,7 +726,7 @@
 								}
 								$parameters['device_profile_uuid'] = $device_profile_uuid;
 				//JA START - skip own blf - just the one line below
-				$parameters['user_id'] = $device_lines['1']['user_id'];
+//				$parameters['user_id'] = $device_lines['1']['user_id'];
 //not working do not use					$parameters['user_id'] = $lines['1']['user_id'];
 				//JA
 								$database = new database;
