@@ -701,7 +701,7 @@
 								$sql .= "profile_key_icon as device_key_icon ";
 								$sql .= "from v_device_profile_keys ";
 								$sql .= "where device_profile_uuid = :device_profile_uuid ";
-				//JA add a check for $user_id and skip blf if it equals the extension
+				//JA add a check for $user_id and skip blf if it equals the extension - just the one line below and one more about 28 lines down
 //					$sql .= "and (profile_key_value != :user_id or profile_key_value is null) ";
 								if (strtolower($device_vendor) == 'escene'){
 									$sql .= "and (lower(profile_key_vendor) = 'escene' or lower(profile_key_vendor) = 'escene programmable' or profile_key_vendor is null) ";
@@ -725,8 +725,9 @@
 									$sql .= "cast(profile_key_id as numeric) asc ";
 								}
 								$parameters['device_profile_uuid'] = $device_profile_uuid;
-				//JA START
-//					$parameters['user_id'] = $lines['1']['user_id'];
+				//JA START - skip own blf - just the one line below
+				$parameters['user_id'] = $device_lines['1']['user_id'];
+//not working do not use					$parameters['user_id'] = $lines['1']['user_id'];
 				//JA
 								$database = new database;
 								$keys = $database->select($sql, $parameters, 'all');
