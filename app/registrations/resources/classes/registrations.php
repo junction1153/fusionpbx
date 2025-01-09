@@ -309,6 +309,10 @@ if (!class_exists('registrations')) {
 										//lookup vendor by agent
 											if (!empty($registration['agent'])) {
 												$vendor = device::get_vendor_by_agent($registration['agent']);
+//JA - assume polycom if no agent is returned. this is until fusionpbx fixes PolyEdge UA
+												if (empty($vendor)) {
+													$vendor = "polycom"; }
+											
 											}
 
 										//prepare the api command
