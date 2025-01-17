@@ -713,7 +713,7 @@ if (!function_exists('fax_split_dtmf')) {
 		$common_variables = "fax_queue_uuid=".$fax_queue_uuid.",";
 		$common_variables .= "fax_uuid="   . $fax_uuid . ",";
 		//$common_variables .= "accountcode='".$fax_accountcode."',";
-		$common_variables .= "sip_h_accountcode='".$fax_accountcode."',";
+		$common_variables .= "sip_h_X-customacc='".$fax_accountcode."',";
 		$common_variables .= "domain_uuid=".$domain_uuid.",";
 		$common_variables .= "domain_name=".$domain_name.",";
 		if (!empty($fax_caller_id_name)) {
