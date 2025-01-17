@@ -247,8 +247,7 @@
 		//define the fax file
 			$common_variables = '';
 			$common_variables = "accountcode='"                  . $fax_accountcode         . "',";
-			$common_variables .= "sip_h_X-customacc='"          . $fax_accountcode         . "',";
-			$common_variables .= "sip_h_customacc='"          . $fax_accountcode         . "',"; //JA
+			$common_variables .= "sip_h_X-customacc='"          . $fax_accountcode         . "',"; //JA
 			$common_variables .= "domain_uuid="                  . $domain_uuid             . ",";
 			$common_variables .= "domain_name="                  . $domain_name             . ",";
 			$common_variables .= "origination_caller_id_name='"   . $fax_caller_id_name      . "',";
