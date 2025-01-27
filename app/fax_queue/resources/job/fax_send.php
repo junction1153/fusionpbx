@@ -345,6 +345,7 @@
 			}
 			else {
 				echo "fax file missing: ".$fax_file."\n";
+				$fax_status = 'failed';
 			}
 
 	}
