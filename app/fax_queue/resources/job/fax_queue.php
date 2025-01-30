@@ -1,5 +1,4 @@
 <?php
-
 //includes
 	if (defined('STDIN')) {
 		//includes files

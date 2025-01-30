@@ -23,7 +23,7 @@
 --              Mark J. Crane
 
 --set the debug options
-        debug["sql"] = true;
+debug["sql"] = true;
 
 --create the api object
         api = freeswitch.API();
