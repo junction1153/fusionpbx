@@ -5,6 +5,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require "/etc/fusionpbx/config.php";
+require_once "/var/www/freeswitchpbx/public/resources/classes/database.php";
 $db = pg_connect( "host = ".$db_host." port = ".$db_port." dbname = ".$db_name." user = ".$db_username." password=".$db_password.""  );
 if(!$db) {
 	echo "Error : Unable to open database\n";
