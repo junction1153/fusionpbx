@@ -63,13 +63,14 @@ if ($domains_processed == 1) {
 		}
 	}
 
+	//JA comment this out
 	//enable ring group destinations by default 
-	$sql = "update v_ring_group_destinations ";
-	$sql .= "set destination_enabled = true ";
-	$sql .= "where destination_enabled is null; ";
-	$database = new database;
-	$database->execute($sql, null);
-	unset($sql);
+//	$sql = "update v_ring_group_destinations ";
+//	$sql .= "set destination_enabled = true ";
+//	$sql .= "where destination_enabled is null; ";
+//	$database = new database;
+//	$database->execute($sql, null);
+//	unset($sql);
 
 }
 
