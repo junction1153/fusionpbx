@@ -248,6 +248,8 @@
 			$common_variables = '';
 			$common_variables = "accountcode='"                  . $fax_accountcode         . "',";
 			$common_variables .= "sip_h_X-customacc='"          . $fax_accountcode         . "',"; //JA
+                        $common_variables .= "media_mix_inbound_outbound_codecs='true',"; //JA
+                        $common_variables .= "sip_renegotiate-codec-on-reinvite='true',"; //JA
 			$common_variables .= "execute_on_answer='sched_hangup +14400',"; //JA
 			$common_variables .= "call_direction='outbound',"; //JA
 			$common_variables .= "domain_uuid="                  . $domain_uuid             . ",";
