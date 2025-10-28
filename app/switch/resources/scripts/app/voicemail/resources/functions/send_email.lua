@@ -29,9 +29,25 @@
 	local Settings = require "resources.functions.lazy_settings"
 
 --define a function to send email
-	function send_email(id, uuid)
+--	function send_email(id, uuid)
+function send_email(id, uuid)
 		local db = dbh or Database.new('system')
 		local settings = Settings.new(db, domain_name, domain_uuid)
+
+	
+    local voicemail_queue_strategy = settings:get('voicemail', 'voicemail_queue_strategy', 'text');
+
+    if (voicemail_queue_strategy == "modern") then
+        -- NEW QUEUE: send webhook to schedule an email job 
+        local event_name = "send_vm_email_notification"
+        local payload = string.format(
+            '{"event":"%s","data":{"domain_uuid":"%s","voicemail_id":"%s","message_uuid":"%s","default_language":"%s", "default_dialect":"%s"}}',
+            event_name, domain_uuid, id, uuid, default_language, default_dialect
+        )
+        freeswitch.API():executeString(string.format("luarun lua/send_webhook.lua '%s'", payload))
+        return true
+    end
+	
 		local transcribe_enabled = settings:get('voicemail', 'transcribe_enabled', 'boolean');
 		local http_protocol = settings:get('domain', 'http_protocol', 'text') or "https";
 		local email_queue_enabled = "true";
@@ -337,3 +353,4 @@
 			end
 
 	end
+
