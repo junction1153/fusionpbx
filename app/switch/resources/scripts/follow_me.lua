@@ -43,6 +43,32 @@
 --answer the call
 	session:answer();
 
+--JA START. Require human confirmation as to not activate this feature accidentally
+
+--get language and voice settings early
+local sounds_dir = session:getVariable("sounds_dir")
+local default_language = session:getVariable("default_language") or 'en'
+local default_dialect  = session:getVariable("default_dialect") or 'us'
+local default_voice    = session:getVariable("default_voice") or 'callie'
+
+--add this confirmation block before you touch the database
+        session:sleep(1000);
+session:streamFile(sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/ivr/ivr-to_accept_press_one.wav")
+
+-- prompt for 1 digit, retries = 3, timeout = 5 seconds
+local digit = session:playAndGetDigits(1, 1, 3, 5000, "#",
+    "",  -- no failure file
+--        sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/voicemail/vm-goodbye.wav",
+sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/ivr/ivr-to_accept_press_one.wav",
+        "\\d")
+
+if digit ~= "1" then
+    session:streamFile(sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/voicemail/vm-goodbye.wav")
+    session:hangup()
+    return
+end
+--JA END
+
 --get the variables
 	local domain_uuid = session:getVariable("domain_uuid");
 	local domain_name = session:getVariable("domain_name");
