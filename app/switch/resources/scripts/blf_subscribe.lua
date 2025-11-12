@@ -260,8 +260,34 @@ service:bind("PRESENCE_PROBE", function(self, name, event)
 	return handler(event)
 end)
 
-log.notice("start")
+--log.notice("start")
 
-service:run()
+--service:run()
 
-log.notice("stop")
+--log.notice("stop")
+
+-- --------------------------------------------------------------------------
+-- Main loop: recreate BasicEventService each time it stops
+-- --------------------------------------------------------------------------
+log.notice("BLF service started")
+
+while true do
+    local service = BasicEventService.new(log, service_name)
+
+    service:bind("PRESENCE_PROBE", function(self, name, event)
+        local proto = event:getHeader('proto')
+        local handler = proto and protocols[proto]
+        if handler then handler(event) end
+    end)
+
+    local ok, err = pcall(function() service:run() end)
+
+    if not ok then
+        log.errorf("[%s] crashed: %s", service_name, tostring(err))
+    else
+        log.warningf("[%s] stopped normally, restarting", service_name)
+    end
+
+    freeswitch.msleep(5000)
+end
+
