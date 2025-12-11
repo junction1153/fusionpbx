@@ -256,28 +256,41 @@
 			$p->delete("dialplan_edit", "temp");
 
 		// Update subscribed endpoints
-		if (!empty($call_flow_feature_code)) {
-			$esl = event_socket::create();
-			if ($esl->is_connected()) {
-				//send the event
-				$event = "sendevent PRESENCE_IN\n";
-				$event .= "proto: flow\n";
-				$event .= "event_type: presence\n";
-				$event .= "alt_event_type: dialog\n";
-				$event .= "Presence-Call-Direction: outbound\n";
-				$event .= "state: Active (1 waiting)\n";
-				$event .= "from: flow+".$call_flow_feature_code."@".$_SESSION['domain_name']."\n";
-				$event .= "login: flow+".$call_flow_feature_code."@".$_SESSION['domain_name']."\n";
-				$event .= "unique-id: ".$call_flow_uuid."\n";
-				if ($call_flow_status == "true") {
-					$event .= "answer-state: confirmed\n";
-				} else {
-					$event .= "answer-state: terminated\n";
-				}
-				event_socket::command($event);
-			}
-		}
-
+//		if (!empty($call_flow_feature_code)) {
+//			$esl = event_socket::create();
+//			if ($esl->is_connected()) {
+//				//send the event
+//				$event = "sendevent PRESENCE_IN\n";
+//				$event .= "proto: flow\n";
+//				$event .= "event_type: presence\n";
+//				$event .= "alt_event_type: dialog\n";
+//				$event .= "Presence-Call-Direction: outbound\n";
+//				$event .= "state: Active (1 waiting)\n";
+//				$event .= "from: flow+".$call_flow_feature_code."@".$_SESSION['domain_name']."\n";
+//				$event .= "login: flow+".$call_flow_feature_code."@".$_SESSION['domain_name']."\n";
+//				$event .= "unique-id: ".$call_flow_uuid."\n";
+//				if ($call_flow_status == "true") {
+//					$event .= "answer-state: confirmed\n";
+//				} else {
+//					$event .= "answer-state: terminated\n";
+//				}
+//				event_socket::command($event);
+//			}
+//		}
+if (!empty($call_flow_feature_code)) {
+    $esl = event_socket::create();
+    if ($esl->is_connected()) {
+        $domain = $_SESSION['domain_name'];
+        // $call_flow_status: 'true' (day/LED OFF) or 'false' (night/LED ON)
+        // flow_notify.lua expects: feature_code, domain, toggle_status
+        $cmd = "bgapi luarun flow_notify.lua "
+             . escapeshellarg($call_flow_feature_code) . " "
+             . escapeshellarg($domain) . " "
+             . escapeshellarg($call_flow_status);
+        $esl->request($cmd);
+    }
+}
+		
 		//debug info
 			//echo "<pre>";
 			//print_r($message);
