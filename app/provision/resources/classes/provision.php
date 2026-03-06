@@ -17,7 +17,7 @@
 
 	The Initial Developer of the Original Code is
 	Mark J Crane <markjcrane@fusionpbx.com>
-	Copyright (C) 2014-2021
+	Copyright (C) 2014-2018
 	All Rights Reserved.
 
 	Contributor(s):
@@ -212,8 +212,8 @@
 				$x = 0;
 				foreach ($database_contacts as &$row) {
 					$uuid = $row['contact_uuid'];
-					$phone_label = strtolower($row['phone_label']);
-					$contact_category = strtolower($row['contact_category']);
+					$phone_label = strtolower($row['phone_label'] ?? '');
+					$contact_category = strtolower($row['contact_category'] ?? '');
 
 					$contact = array();
 					$contacts[] = &$contact;
@@ -234,7 +234,7 @@
 						$contact['phone_extension']		= $row['phone_extension'];
 					}
 
-					$numbers[$x]['line_number']			= $line['line_number'];
+					$numbers[$x]['line_number']			= $line['line_number'] ?? null;
 					$numbers[$x]['phone_label']			= $phone_label;
 					$numbers[$x]['phone_number']		= $row['phone_number'];
 					$numbers[$x]['phone_extension']		= $row['phone_extension'];
@@ -395,125 +395,125 @@
 					}
 					else {
 						//use the user_agent to pre-assign a template for 1-hit provisioning. Enter the a unique string to match in the user agent, and the template it should match.
-//							$templates['Linksys/SPA-2102'] = 'linksys/spa2102';
-//							$templates['Linksys/SPA-3102'] = 'linksys/spa3102';
-//							$templates['Linksys/SPA-9212'] = 'linksys/spa921';
+							$templates['Linksys/SPA-2102'] = 'linksys/spa2102';
+							$templates['Linksys/SPA-3102'] = 'linksys/spa3102';
+							$templates['Linksys/SPA-9212'] = 'linksys/spa921';
 
-//							$templates['Cisco/SPA301'] = 'cisco/spa301';
-//							$templates['Cisco/SPA301D'] = 'cisco/spa302d';
-//							$templates['Cisco/SPA303'] = 'cisco/spa303';
-//							$templates['Cisco/SPA501G'] = 'cisco/spa501g';
-//							$templates['Cisco/SPA502G'] = 'cisco/spa502g';
-//							$templates['Cisco/SPA504G'] = 'cisco/spa504g';
-//							$templates['Cisco/SPA508G'] = 'cisco/spa508g';
-//							$templates['Cisco/SPA509G'] = 'cisco/spa509g';
-//							$templates['Cisco/SPA512G'] = 'cisco/spa512g';
-//							$templates['Cisco/SPA514G'] = 'cisco/spa514g';
-//							$templates['Cisco/SPA525G2'] = 'cisco/spa525g2';
+							$templates['Cisco/SPA301'] = 'cisco/spa301';
+							$templates['Cisco/SPA301D'] = 'cisco/spa302d';
+							$templates['Cisco/SPA303'] = 'cisco/spa303';
+							$templates['Cisco/SPA501G'] = 'cisco/spa501g';
+							$templates['Cisco/SPA502G'] = 'cisco/spa502g';
+							$templates['Cisco/SPA504G'] = 'cisco/spa504g';
+							$templates['Cisco/SPA508G'] = 'cisco/spa508g';
+							$templates['Cisco/SPA509G'] = 'cisco/spa509g';
+							$templates['Cisco/SPA512G'] = 'cisco/spa512g';
+							$templates['Cisco/SPA514G'] = 'cisco/spa514g';
+							$templates['Cisco/SPA525G2'] = 'cisco/spa525g2';
 
-//							$templates['snom300-SIP'] = 'snom/300';
-//							$templates['snom320-SIP'] = 'snom/320';
-//							$templates['snom360-SIP'] = 'snom/360';
-//							$templates['snom370-SIP'] = 'snom/370';
-//							$templates['snom820-SIP'] = 'snom/820';
-//							$templates['snom-m3-SIP'] = 'snom/m3';
-//							
-//							$templates['Fanvil X6'] = 'fanvil/x6';
-//							$templates['Fanvil i30'] = 'fanvil/i30';
+							$templates['snom300-SIP'] = 'snom/300';
+							$templates['snom320-SIP'] = 'snom/320';
+							$templates['snom360-SIP'] = 'snom/360';
+							$templates['snom370-SIP'] = 'snom/370';
+							$templates['snom820-SIP'] = 'snom/820';
+							$templates['snom-m3-SIP'] = 'snom/m3';
+							
+							$templates['Fanvil X6'] = 'fanvil/x6';
+							$templates['Fanvil i30'] = 'fanvil/i30';
 
-//							$templates['yealink SIP-CP860'] = 'yealink/cp860';
-//#							$templates['yealink SIP-CP860'] = 'yealink/cp920';
-//#							$templates['yealink SIP-CP860'] = 'yealink/cp960';
-//							$templates['yealink SIP-T19P'] = 'yealink/t19p';
-//							$templates['yealink SIP-T20P'] = 'yealink/t20p';
-//							$templates['yealink SIP-T21P'] = 'yealink/t21p';
-//							$templates['yealink SIP-T22P'] = 'yealink/t22p';
-//							$templates['yealink SIP-T23G'] = 'yealink/t23g';
-//							$templates['yealink SIP-T23P'] = 'yealink/t23p';
-//							$templates['yealink SIP-T26P'] = 'yealink/t26p';
-//							$templates['yealink SIP-T27G'] = 'yealink/t27g';
-//							$templates['Yealink SIP-T29G'] = 'yealink/t27p';
-//							$templates['yealink SIP-T28P'] = 'yealink/t28p';
-//							$templates['Yealink SIP-T29G'] = 'yealink/t29g';
-//							$templates['yealink SIP-T29P'] = 'yealink/t29p';
-//							$templates['Yealink SIP-T32G'] = 'yealink/t32g';
-//							$templates['Yealink SIP-T33G'] = 'yealink/t33g';
-//							$templates['Yealink SIP-T38G'] = 'yealink/t38g';
-//							$templates['Yealink SIP-T40P'] = 'yealink/t40p';
-//							$templates['Yealink SIP-T41G'] = 'yealink/t41g';
-//							$templates['Yealink SIP-T41P'] = 'yealink/t41p';
-//							$templates['Yealink SIP-T41S'] = 'yealink/t41s';
-//							$templates['Yealink SIP-T42G'] = 'yealink/t42g';
-//							$templates['Yealink SIP-T42S'] = 'yealink/t42s';
-//							$templates['Yealink SIP-T46G'] = 'yealink/t46g';
-//							$templates['Yealink SIP-T46S'] = 'yealink/t46s';
-//							$templates['Yealink SIP-T48G'] = 'yealink/t48g';
-//							$templates['Yealink SIP-T48S'] = 'yealink/t48s';
-//							$templates['Yealink SIP-T49G'] = 'yealink/t49g';
-//							$templates['Yealink SIP-T52S'] = 'yealink/t52s';
-//							$templates['Yealink SIP-T54S'] = 'yealink/t54s';
-//							$templates['Yealink SIP-T56A'] = 'yealink/t56a';
-//							$templates['Yealink SIP-T58'] = 'yealink/t58v';
-//							$templates['VP530P'] = 'yealink/vp530';
-//							$templates['Yealink SIP-W52P'] = 'yealink/w52p';
-//							$templates['Yealink SIP-W56P'] = 'yealink/w56p';
+							$templates['yealink SIP-CP860'] = 'yealink/cp860';
+#							$templates['yealink SIP-CP860'] = 'yealink/cp920';
+#							$templates['yealink SIP-CP860'] = 'yealink/cp960';
+							$templates['yealink SIP-T19P'] = 'yealink/t19p';
+							$templates['yealink SIP-T20P'] = 'yealink/t20p';
+							$templates['yealink SIP-T21P'] = 'yealink/t21p';
+							$templates['yealink SIP-T22P'] = 'yealink/t22p';
+							$templates['yealink SIP-T23G'] = 'yealink/t23g';
+							$templates['yealink SIP-T23P'] = 'yealink/t23p';
+							$templates['yealink SIP-T26P'] = 'yealink/t26p';
+							$templates['yealink SIP-T27G'] = 'yealink/t27g';
+							$templates['Yealink SIP-T29G'] = 'yealink/t27p';
+							$templates['yealink SIP-T28P'] = 'yealink/t28p';
+							$templates['Yealink SIP-T29G'] = 'yealink/t29g';
+							$templates['yealink SIP-T29P'] = 'yealink/t29p';
+							$templates['Yealink SIP-T32G'] = 'yealink/t32g';
+							$templates['Yealink SIP-T33G'] = 'yealink/t33g';
+							$templates['Yealink SIP-T38G'] = 'yealink/t38g';
+							$templates['Yealink SIP-T40P'] = 'yealink/t40p';
+							$templates['Yealink SIP-T41G'] = 'yealink/t41g';
+							$templates['Yealink SIP-T41P'] = 'yealink/t41p';
+							$templates['Yealink SIP-T41S'] = 'yealink/t41s';
+							$templates['Yealink SIP-T42G'] = 'yealink/t42g';
+							$templates['Yealink SIP-T42S'] = 'yealink/t42s';
+							$templates['Yealink SIP-T46G'] = 'yealink/t46g';
+							$templates['Yealink SIP-T46S'] = 'yealink/t46s';
+							$templates['Yealink SIP-T48G'] = 'yealink/t48g';
+							$templates['Yealink SIP-T48S'] = 'yealink/t48s';
+							$templates['Yealink SIP-T49G'] = 'yealink/t49g';
+							$templates['Yealink SIP-T52S'] = 'yealink/t52s';
+							$templates['Yealink SIP-T54S'] = 'yealink/t54s';
+							$templates['Yealink SIP-T56A'] = 'yealink/t56a';
+							$templates['Yealink SIP-T58'] = 'yealink/t58v';
+							$templates['VP530P'] = 'yealink/vp530';
+							$templates['Yealink SIP-W52P'] = 'yealink/w52p';
+							$templates['Yealink SIP-W56P'] = 'yealink/w56p';
 
-//							$templates['HW DP750'] = 'grandstream/dp750';
-//							$templates['HW GXP1450'] = 'grandstream/gxp1450';
-//							$templates['HW GXP1628'] = 'grandstream/gxp16xx';
-//							$templates['HW GXP1610'] = 'grandstream/gxp16xx';
-//							$templates['HW GXP1620'] = 'grandstream/gxp16xx';
-//							$templates['HW GXP1625'] = 'grandstream/gxp16xx';
-//							$templates['HW GXP1630'] = 'grandstream/gxp16xx';
-//							$templates['HW GXP1760W'] = 'grandstream/gxp17xx';
-//							$templates['HW GXP1780'] = 'grandstream/gxp17xx';
-//							$templates['HW GXP1782'] = 'grandstream/gxp17xx';
-//							$templates['HW GXP2124'] = 'grandstream/gxp2124';
-//							$templates['HW GXP2130'] = 'grandstream/gxp2130';
-//							$templates['HW GXP2135'] = 'grandstream/gxp2135';
-//							$templates['HW GXP2140'] = 'grandstream/gxp2140';
-//							$templates['HW GXP2160'] = 'grandstream/gxp2160';
-//							$templates['HW GXP2170'] = 'grandstream/gxp2170';
-//							$templates['HW GXV3140'] = 'grandstream/gxv3140';
-//							$templates['HW GXV3240'] = 'grandstream/gxv3240';
-//							$templates['HW GXV3175'] = 'grandstream/gxv3175';
+							$templates['HW DP750'] = 'grandstream/dp750';
+							$templates['HW GXP1450'] = 'grandstream/gxp1450';
+							$templates['HW GXP1628'] = 'grandstream/gxp16xx';
+							$templates['HW GXP1610'] = 'grandstream/gxp16xx';
+							$templates['HW GXP1620'] = 'grandstream/gxp16xx';
+							$templates['HW GXP1625'] = 'grandstream/gxp16xx';
+							$templates['HW GXP1630'] = 'grandstream/gxp16xx';
+							$templates['HW GXP1760W'] = 'grandstream/gxp17xx';
+							$templates['HW GXP1780'] = 'grandstream/gxp17xx';
+							$templates['HW GXP1782'] = 'grandstream/gxp17xx';
+							$templates['HW GXP2124'] = 'grandstream/gxp2124';
+							$templates['HW GXP2130'] = 'grandstream/gxp2130';
+							$templates['HW GXP2135'] = 'grandstream/gxp2135';
+							$templates['HW GXP2140'] = 'grandstream/gxp2140';
+							$templates['HW GXP2160'] = 'grandstream/gxp2160';
+							$templates['HW GXP2170'] = 'grandstream/gxp2170';
+							$templates['HW GXV3140'] = 'grandstream/gxv3140';
+							$templates['HW GXV3240'] = 'grandstream/gxv3240';
+							$templates['HW GXV3175'] = 'grandstream/gxv3175';
 
-//							$templates['PolycomVVX-VVX_101-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_201-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_300-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_301-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_310-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_311-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_400-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_410-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_500-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_501-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_600-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_601-UA/4'] = 'polycom/4.x';
-//							$templates['PolycomVVX-VVX_101-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_201-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_300-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_301-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_310-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_311-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_400-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_410-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_500-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_501-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_600-UA/5'] = 'polycom/5.x';
-//							$templates['PolycomVVX-VVX_601-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_101-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_201-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_300-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_301-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_310-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_311-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_400-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_410-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_500-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_501-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_600-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_601-UA/4'] = 'polycom/4.x';
+							$templates['PolycomVVX-VVX_101-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_201-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_300-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_301-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_310-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_311-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_400-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_410-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_500-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_501-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_600-UA/5'] = 'polycom/5.x';
+							$templates['PolycomVVX-VVX_601-UA/5'] = 'polycom/5.x';
 
-//							$templates['Vesa VCS754'] = 'vtech/vcs754';
-//							$templates['Wget/1.11.3'] = 'konftel/kt300ip';
+							$templates['Vesa VCS754'] = 'vtech/vcs754';
+							$templates['Wget/1.11.3'] = 'konftel/kt300ip';
 
-//							$templates['Flyingvoice FIP10'] = 'flyingvoice/fip10';
-//							$templates['Flyingvoice FIP11C'] = 'flyingvoice/fip11c';
-//							$templates['Flyingvoice FIP12WP'] = 'flyingvoice/fip12wp';
-//							$templates['Flyingvoice FIP13G'] = 'flyingvoice/fip13g';
-//							$templates['Flyingvoice FIP14G'] = 'flyingvoice/fip14g';
-//							$templates['Flyingvoice FIP15G'] = 'flyingvoice/fip15g';
-//							$templates['Flyingvoice FIP16'] = 'flyingvoice/fip16';
-//							$templates['Flyingvoice FIP16PLUS'] = 'flyingvoice/fip16plus';
+							$templates['Flyingvoice FIP10'] = 'flyingvoice/fip10';
+							$templates['Flyingvoice FIP11C'] = 'flyingvoice/fip11c';
+							$templates['Flyingvoice FIP12WP'] = 'flyingvoice/fip12wp';
+							$templates['Flyingvoice FIP13G'] = 'flyingvoice/fip13g';
+							$templates['Flyingvoice FIP14G'] = 'flyingvoice/fip14g';
+							$templates['Flyingvoice FIP15G'] = 'flyingvoice/fip15g';
+							$templates['Flyingvoice FIP16'] = 'flyingvoice/fip16';
+							$templates['Flyingvoice FIP16PLUS'] = 'flyingvoice/fip16plus';
 							
 							foreach ($templates as $key=>$value){
 								if(stripos($_SERVER['HTTP_USER_AGENT'],$key)!== false) {
@@ -684,8 +684,10 @@
 								$device_lines[$id] = $row;
 							}
 							unset($parameters);
+							
+                            require_once __DIR__ . '/../../../../../app/helpers.php';
 
-						//get the device profile keys
+							//get the device profile keys
 							if (is_uuid($device_profile_uuid)) {
 								$sql = "select ";
 								$sql .= "profile_key_id as device_key_id, ";
@@ -701,8 +703,8 @@
 								$sql .= "profile_key_icon as device_key_icon ";
 								$sql .= "from v_device_profile_keys ";
 								$sql .= "where device_profile_uuid = :device_profile_uuid ";
-				//JA add a check for $user_id and skip blf if it equals the extension - just the one line below and one more about 28 lines down
-//					$sql .= "and (profile_key_value != :user_id or profile_key_value is null) ";
+								//add a check for $user_id and skip blf if it equals the extension
+								$sql .= "and (profile_key_value != :user_id or profile_key_value is null) ";
 								if (strtolower($device_vendor) == 'escene'){
 									$sql .= "and (lower(profile_key_vendor) = 'escene' or lower(profile_key_vendor) = 'escene programmable' or profile_key_vendor is null) ";
 								}
@@ -725,14 +727,11 @@
 									$sql .= "cast(profile_key_id as numeric) asc ";
 								}
 								$parameters['device_profile_uuid'] = $device_profile_uuid;
-				//JA START - skip own blf - just the one line below
-//				$parameters['user_id'] = $device_lines['1']['user_id'];
-//not working do not use					$parameters['user_id'] = $lines['1']['user_id'];
-				//JA
+								$parameters['user_id'] = $device_lines['1']['user_id'] ?? null;
 								$database = new database;
 								$keys = $database->select($sql, $parameters, 'all');
-				//JA one line
-					unset($parameters);
+
+                                $blf_label_map = fspbx_prefetch_blf_labels($domain_uuid, $keys);
 
 								//add the profile keys to the device keys array
 								if (is_array($keys) && sizeof($keys) != 0) {
@@ -742,25 +741,18 @@
 										$category = $row['device_key_category'];
 										$device_key_vendor = $row['device_key_vendor'];
 										$device_key_line = $row['device_key_line'];
-
-//JA
-				//Update BLF name with extension name from database if it's empty
-					if ($row['device_key_label'] == "") {
-					$sql = "select effective_caller_id_name ";
-					$sql .= "from v_extensions ";
-					$sql .= "where domain_uuid= :domain_uuid ";
-					$sql .= "and extension= :extension ";
-					$parameters['domain_uuid'] = $domain_uuid;
-					$parameters['extension'] = $row['device_key_value'];
-					$database = new database;
-					$blf_label = $database->select($sql, $parameters, 'column');
-					$row['device_key_label'] = $blf_label;
-					unset($sql, $parameters);
-					}
-
+										
+										//Update BLF name with extension name from database if it's empty
+                                        if (empty($row['device_key_label'])) {
+                                            $val = (string)($row['device_key_value'] ?? '');
+                                            if ($val !== '' && isset($blf_label_map[$val])) {
+                                                $row['device_key_label'] = $blf_label_map[$val];
+                                            }
+                                        }
 
 										//build the device keys array
 										$device_keys[$category][$id] = $row;
+										$device_keys[$category][$id]['device_key_id'] = $id;
 										$device_lines[$device_key_line]['device_key_owner'] = "profile";
 
 										//add line_keys to the polycom array
@@ -770,6 +762,7 @@
 
 										//kept temporarily for backwards comptability to allow custom templates to be updated
 										$device_keys[$id] = $row;
+										$device_keys[$id]['device_key_id'] = $id;
 										$device_keys[$id]['device_key_owner'] = "profile";
 									}
 								}
@@ -803,9 +796,8 @@
 							$parameters['device_uuid'] = $device_uuid;
 							$database = new database;
 							$keys = $database->select($sql, $parameters, 'all');
-				//JA
-					unset($parameters);
-				//JA
+
+                            $blf_label_map = fspbx_prefetch_blf_labels($domain_uuid, $keys);
 
 						//override profile keys with the device keys
 							if (is_array($keys)) {
@@ -815,47 +807,100 @@
 									$category = $row['device_key_category'];
 									$device_key_line = $row['device_key_line'];
 
-				//JA
-				//Update BLF name with extension name from database if it's empty
-					if ($row['device_key_label'] == "") {
-					$sql = "select effective_caller_id_name ";
-					$sql .= "from v_extensions ";
-					$sql .= "where domain_uuid= :domain_uuid ";
-					$sql .= "and extension= :extension ";
-					$parameters['domain_uuid'] = $domain_uuid;
-					$parameters['extension'] = $row['device_key_value'];
-					$database = new database;
-					$blf_label = $database->select($sql, $parameters, 'column');
-					$row['device_key_label'] = $blf_label;
-					unset($sql, $parameters);
-					}
-				//JA
-
-
 									//add line_keys to the polycom array
 									if ($row['device_key_vendor'] == 'polycom' && $row['device_key_type'] == 'line') {
 										$device_lines[$device_key_line]['line_keys'] = $row['device_key_value'];
 									}
+									
+									//Update BLF name with extension name from database if it's empty
+                                    if (empty($row['device_key_label'])) {
+                                        $val = (string)($row['device_key_value'] ?? '');
+                                        if ($val !== '' && isset($blf_label_map[$val])) {
+                                            $row['device_key_label'] = $blf_label_map[$val];
+                                        }
+                                    }
 
 									//build the device keys array
 									$device_keys[$category][$id] = $row;
-				//JA start
-					$device_keys[$category][$id]['device_key_id'] = $id;
-				//JA end
-
+									$device_keys[$category][$id]['device_key_id'] = $id;
 									$device_keys[$category][$id]['device_key_owner'] = "device";
 
 									//kept temporarily for backwards comptability to allow custom templates to be updated
 									$device_keys[$id] = $row;
-				//JA start
-					$device_keys[$id]['device_key_id'] = $id;
-				//JA end
-
+									$device_keys[$category][$id]['device_key_id'] = $id;
 									$device_keys[$id]['device_key_owner'] = "device";
 								}
 							}
 							unset($parameters, $keys);
 
+
+                            $sql = "select device_key_uuid, device_uuid, key_index, key_type, key_value, key_label
+                                    from device_keys
+                                    where device_uuid = :device_uuid ";
+                            // Added logic to skip self-referencing BLF
+                            $sql .= "and (key_value != :user_id or key_value is null) ";
+                            $sql .= "order by key_index asc";
+                            $parameters['device_uuid'] = $device_uuid;
+                            $parameters['user_id'] = $device_lines['1']['user_id'] ?? null;
+                            $database = new database;
+                            $new_keys = $database->select($sql, $parameters, 'all');
+                            unset($parameters);
+
+                            if (is_array($new_keys) && sizeof($new_keys) != 0) {
+                                fspbx_apply_new_keys_override($device_keys, $new_keys, $device_uuid, $device_vendor, $device_lines, $domain_uuid);
+                            }
+                            unset($new_keys);
+
+                            //----------------------------------------------------------------------
+                            // START: Re-sequence Keys (Fix gaps caused by skipping BLF)
+                            //----------------------------------------------------------------------
+                            if (is_array($device_keys)) {
+                                // 1. Remove the existing "flat" keys (the root level numbered keys) 
+                                //    so we don't have leftover ghosts (like key 6 staying 6).
+                                foreach ($device_keys as $k => $v) {
+                                    if (is_numeric($k)) {
+                                        unset($device_keys[$k]);
+                                    }
+                                }
+
+                                // 2. Iterate through categories to re-index
+                                $cats_to_fix = array('line', 'memory', 'expansion', 'programmable');
+                                
+                                foreach ($cats_to_fix as $cat) {
+                                    if (isset($device_keys[$cat]) && is_array($device_keys[$cat])) {
+                                        // Sort by the old ID first to ensure we keep the relative order
+                                        ksort($device_keys[$cat]);
+                                        
+                                        $new_cat_array = array();
+                                        $x = 1; // Reset counter to 1 for this category
+
+                                        foreach ($device_keys[$cat] as $row) {
+                                            // Update the internal ID to match the new sequence 
+                                            // (This ensures the phone template writes "Line Key 5" instead of "Line Key 6")
+                                            $row['device_key_id'] = $x;
+                                            
+                                            // Add to the new category array
+                                            $new_cat_array[$x] = $row;
+                                            
+                                            // Add to the flat array at the root (required for backward compatibility)
+                                            $device_keys[$x] = $row;
+
+                                            $x++;
+                                        }
+                                        // Replace the category array with the clean, re-indexed one
+                                        $device_keys[$cat] = $new_cat_array;
+                                    }
+                                }
+                            }
+                            //----------------------------------------------------------------------
+                            // END: Re-sequence Keys
+                            //----------------------------------------------------------------------
+
+                            // print "<pre>";
+                            // print_r($device_keys);
+                            // print "</pre>";
+                            // return;
+							
 						//set the variables
 							if (is_array($device_lines) && sizeof($device_lines) != 0) {
 								foreach($device_lines as $row) {
@@ -957,7 +1002,7 @@
 					}
 
 				//get the extensions and add them to the contacts array
-					if (is_uuid($device_uuid) && is_uuid($domain_uuid) && $_SESSION['provision']['contact_extensions']['boolean'] == "true") {
+					if (is_uuid($device_uuid) && is_uuid($domain_uuid) && !empty($_SESSION['provision']['contact_extensions']['boolean']) && $_SESSION['provision']['contact_extensions']['boolean'] == "true") {
 						//get contacts from the database
 							$sql = "select extension_uuid as contact_uuid, directory_first_name, directory_last_name, ";
 							$sql .= "effective_caller_id_name, effective_caller_id_number, ";
@@ -1019,7 +1064,7 @@
 						echo "<pre>\n";
 						exit;
 					}
-
+					
 				//set the variables key and values
 					$x = 1;
 					$variables['domain_name'] = $domain_name;
