@@ -61,7 +61,7 @@
 
     if (session:getVariable("valet_parking_orbit_exten") == nil) then
         -- Set to the referred users extension if not specified
---        session:setVariable("valet_parking_orbit_exten",referred_by_user);
+        session:setVariable("valet_parking_orbit_exten",referred_by_user);
     end
 
     freeswitch.consoleLog("parkinfo", "park@"..domain_name.." "..park_lot);

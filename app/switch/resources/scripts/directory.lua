@@ -31,7 +31,7 @@
 	digit_timeout = 5000;
 	search_limit = 3;
 	search_count = 0;
-	caller_destination = session:getVariable("caller_destination"); --JA
+--	caller_destination = session:getVariable("caller_destination"); --JA
 
 --include config.lua
 	require "resources.functions.config";
@@ -371,8 +371,15 @@
 
           --JA 0 to exit directory
 							  if (dtmf_digits == "0") then
-					session:execute("transfer", caller_destination.." XML ${domain_name}");
+--					session:execute("transfer", caller_destination.." XML ${domain_name}");
 
+		        if (previous_menu ~= nil and previous_menu ~= "") then
+                session:execute("transfer", previous_menu);
+        else
+                session:streamFile(sounds_dir.."/voicemail/vm-goodbye.wav");
+                session:hangup();
+
+        end
 					elseif (found ~= true) then --JA
 
 --                      if (found ~= true) then

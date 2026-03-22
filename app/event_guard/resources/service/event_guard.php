@@ -431,6 +431,14 @@
 		//define global variables
 		global $debug;
 
+// --- HARDCODED WHITELIST START ---
+        // Add your IPs here. Returns true immediately, bypassing all DB checks.
+        if ($ip_address == '10.90.1.1') {
+             if ($debug) { echo "address: ".$ip_address." allowed by: hardcoded whitelist\n"; }
+             return true;
+        }
+// --- HARDCODED WHITELIST END ---
+	
 		//invalid ip address
 		if (!filter_var($ip_address, FILTER_VALIDATE_IP)) {
 			return false;

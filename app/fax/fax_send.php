@@ -714,6 +714,8 @@ if (!function_exists('fax_split_dtmf')) {
 		$common_variables .= "fax_uuid="   . $fax_uuid . ",";
 		//$common_variables .= "accountcode='".$fax_accountcode."',";
 		$common_variables .= "sip_h_X-customacc='".$fax_accountcode."',";
+                $common_variables .= "media_mix_inbound_outbound_codecs='true',"; //JA
+                $common_variables .= "sip_renegotiate-codec-on-reinvite='true',"; //JA
 		$common_variables .= "call_direction='outbound',";
 		$common_variables .= "domain_uuid=".$domain_uuid.",";
 		$common_variables .= "domain_name=".$domain_name.",";
