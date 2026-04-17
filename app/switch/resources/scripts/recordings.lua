@@ -124,7 +124,8 @@
 				min_digits = 1;
 				max_digits = 20;
 				session:sleep(1000);
-				recording_id = session:playAndGetDigits(min_digits, max_digits, max_tries, digit_timeout, "#", sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/ivr/ivr-id_number.wav", "", "\\d+");
+--				recording_id = session:playAndGetDigits(min_digits, max_digits, max_tries, digit_timeout, "#", sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/ivr/ivr-id_number.wav", "", "\\d+");
+				recording_id = session:playAndGetDigits(min_digits, max_digits, max_tries, digit_timeout, "#", "/var/www/fspbx/resources/sounds/en/us/jcc_recording_id_prompt.wav", "", "\\d+");
 				session:setVariable("recording_id", recording_id);
 				recording_filename = recording_prefix..recording_id.."."..record_ext;
 			elseif (tonumber(recording_id) ~= nil) then
@@ -142,7 +143,10 @@
 			end
 
 		--prompt for the recording
-			session:streamFile(sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/ivr/ivr-recording_started.wav");
+--			session:streamFile(sounds_dir.."/"..default_language.."/"..default_dialect.."/"..default_voice.."/ivr/ivr-recording_started.wav");
+			session:streamFile("/var/www/fspbx/resources/sounds/en/us/jcc_recording_begin.wav");
+			session:execute("playback","silence_stream://200");
+			session:streamFile("tone_stream://L=1;%(1000, 0, 640)");
 			session:execute("set", "playback_terminators=#");
 
 		--make the directory
@@ -279,7 +283,7 @@
 
 			if (digits == "1") then
 				--recording saved, hangup
-				session:streamFile("voicemail/vm-saved.wav");
+				session:streamFile("/var/www/fspbx/resources/sounds/en/us/jcc_recording_saved_bye.wav");
 				return;
 			elseif (digits == "2") then
 				--reset the digit timeout
@@ -291,7 +295,7 @@
 					begin_record(session, sounds_dir, recordings_dir);
 			else
 				--recording saved, hangup
-					session:streamFile("voicemail/vm-saved.wav");
+					session:streamFile("/var/www/fspbx/resources/sounds/en/us/jcc_recording_saved_bye.wav");
 				return;
 			end
 	end
