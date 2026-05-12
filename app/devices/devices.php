@@ -294,10 +294,20 @@
 		echo button::create(['type'=>'button','label'=>$text['button-profiles'],'icon'=>'clone','link'=>'device_profiles.php']);
 	}
 	$margin_left = permission_exists('device_import') || permission_exists('device_export') || permission_exists('device_vendor_view') || permission_exists('device_profile_view') ? "margin-left: 15px;" : null;
-	if (permission_exists('device_add') && (empty($_SESSION['limit']['devices']['numeric']) || ($total_devices < $_SESSION['limit']['devices']['numeric']))) {
-		echo button::create(['type'=>'button','label'=>$text['button-add'],'icon'=>$_SESSION['theme']['button_icon_add'],'id'=>'btn_add','style'=>$margin_left,'link'=>'device_edit.php']);
-		unset($margin_left);
-	}
+//JA TEMP	if (permission_exists('device_add') && (empty($_SESSION['limit']['devices']['numeric']) || ($total_devices < $_SESSION['limit']['devices']['numeric']))) {
+//		echo button::create(['type'=>'button','label'=>$text['button-add'],'icon'=>$_SESSION['theme']['button_icon_add'],'id'=>'btn_add','style'=>$margin_left,'link'=>'device_edit.php']);
+//		unset($margin_left);
+//	}
+// temporary: only show + ADD to users in the superadmin group
+if (
+	if_group("superadmin") &&
+	permission_exists('device_add') &&
+	(empty($_SESSION['limit']['devices']['numeric']) || ($total_devices < $_SESSION['limit']['devices']['numeric']))
+) {
+	echo button::create(['type'=>'button','label'=>$text['button-add'],'icon'=>$_SESSION['theme']['button_icon_add'],'id'=>'btn_add','style'=>$margin_left,'link'=>'device_edit.php']);
+	unset($margin_left);
+}
+
 	if (permission_exists('device_edit') && $devices) {
 		echo button::create(['type'=>'button','label'=>$text['button-toggle'],'icon'=>$_SESSION['theme']['button_icon_toggle'],'id'=>'btn_toggle','name'=>'btn_toggle','style'=>'display: none; '.($margin_left ?? null),'onclick'=>"modal_open('modal-toggle','btn_toggle');"]);
 		unset($margin_left);
