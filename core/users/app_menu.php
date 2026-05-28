@@ -60,9 +60,6 @@ $y=0;
 	$apps[$x]['menu'][$y]['path'] = "/core/users/user_edit.php?id=user";
 	$apps[$x]['menu'][$y]['order'] = "";
 	$apps[$x]['menu'][$y]['groups'][] = "superadmin";
-	$apps[$x]['menu'][$y]['groups'][] = "admin";
-	$apps[$x]['menu'][$y]['groups'][] = "user";
-	$apps[$x]['menu'][$y]['groups'][] = "agent";
 	$y++;
 
 ?>

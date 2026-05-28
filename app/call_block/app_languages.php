@@ -891,8 +891,8 @@ $text['description-direction']['zh-cn'] = "选择要阻止的呼叫方向。";
 $text['description-direction']['ja-jp'] = "ブロックする通話の方向を選択します。";
 $text['description-direction']['ko-kr'] = "차단할 호출의 방향을 선택합니다.";
 
-$text['description-call_block_name']['en-us'] = "Enter the Caller ID Name to block.";
-$text['description-call_block_name']['en-gb'] = "Enter the Caller ID Name to block.";
+$text['description-call_block_name']['en-us'] = "Enter the Caller ID Name to block. Regular expressions are supported; for example, ^\\?SPAM.";
+$text['description-call_block_name']['en-gb'] = "Enter the Caller ID Name to block. Regular expressions are supported; for example, ^\\?SPAM.";
 $text['description-call_block_name']['ar-eg'] = "أدخل اسم معرف المتصل لحظره.";
 $text['description-call_block_name']['de-at'] = "Geben Sie den zu blockierenden Anrufer-ID-Namen ein.";
 $text['description-call_block_name']['de-ch'] = "Geben Sie den zu blockierenden Anrufer-ID-Namen ein.";

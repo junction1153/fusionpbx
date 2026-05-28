@@ -13,6 +13,7 @@ app/provision/upload*
 envinfo.ini
 storage/logs/*
 app/switch/resources/scripts/cidlookup_custom.lua
+AGENTS.md
 
 *.php~
 

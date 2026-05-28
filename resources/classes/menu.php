@@ -653,6 +653,25 @@ if (!class_exists('menu')) {
 		}
 
 		/**
+		 * determine whether a menu item should be visible
+		 */
+		private function menu_item_visible($menu_item) {
+			if (if_group('superadmin')) {
+				return true;
+			}
+			if (($menu_item['menu_item_default_uuid'] ?? null) == '4d532f0b-c206-c39d-ff33-fc67d668fb69') {
+				return false;
+			}
+			if (($menu_item['menu_item_link'] ?? null) == '/core/users/user_edit.php?id=user') {
+				return false;
+			}
+			if (($menu_item['menu_language_title'] ?? null) == 'Account Settings' || ($menu_item['menu_item_title'] ?? null) == 'Account Settings') {
+				return false;
+			}
+			return true;
+		}
+
+		/**
 		 * create the sub menus
 		 */
 		private function build_child_html($menu_item_level, $submenu_array) {
@@ -668,6 +687,10 @@ if (!class_exists('menu')) {
 				$submenu_html = "<ul class='menu_sub'>\n";
 
 				foreach($submenu_array as $submenu_field) {
+					if (!$this->menu_item_visible($submenu_field)) {
+						continue;
+					}
+
 					//set the variables
 						$menu_item_link = $submenu_field['menu_item_link'];
 						$menu_item_category = $submenu_field['menu_item_category'];
@@ -800,7 +823,7 @@ if (!class_exists('menu')) {
 				}
 
 			//get the child menu from the database
-				$sql = "select i.menu_item_link, l.menu_item_title as menu_language_title, i.menu_item_title, i.menu_item_protected, i.menu_item_category, i.menu_item_icon, i.menu_item_uuid, i.menu_item_parent_uuid ";
+				$sql = "select i.menu_item_link, l.menu_item_title as menu_language_title, i.menu_item_title, i.menu_item_protected, i.menu_item_category, i.menu_item_icon, i.menu_item_uuid, i.menu_item_parent_uuid, i.uuid as menu_item_default_uuid ";
 				$sql .= "from v_menu_items as i, v_menu_languages as l ";
 				$sql .= "where i.menu_item_uuid = l.menu_item_uuid ";
 				$sql .= "and l.menu_language = :menu_language ";
@@ -837,6 +860,10 @@ if (!class_exists('menu')) {
 				$a = Array();
 				if (is_array($sub_result) && @sizeof($sub_result) != 0) {
 					foreach($sub_result as $row) {
+						if (!$this->menu_item_visible($row)) {
+							continue;
+						}
+
 						//set the variables
 							$menu_item_link = $row['menu_item_link'];
 							$menu_item_category = $row['menu_item_category'];
@@ -1024,6 +1051,10 @@ if (!class_exists('menu')) {
 								$html .= "								<ul class='multi-column-dropdown'>\n";
 							}
 							foreach ($menu_parent['menu_items'] as $index_sub => $menu_sub) {
+								if (!$this->menu_item_visible($menu_sub)) {
+									continue;
+								}
+
 								$mod_a_2 = $menu_sub['menu_item_link'];
 								if ($mod_a_2 == '') {
 									$mod_a_2 = '#';
@@ -1149,6 +1180,10 @@ if (!class_exists('menu')) {
 							if (is_array($menu_item_main['menu_items']) && sizeof($menu_item_main['menu_items']) != 0) {
 								$html .= "	<div id='sub_".$menu_item_main['menu_item_uuid']."' class='menu_side_sub' style='display: none;'>\n";
 								foreach ($menu_item_main['menu_items'] as $menu_index_sub => $menu_item_sub) {
+									if (!$this->menu_item_visible($menu_item_sub)) {
+										continue;
+									}
+
 									$html .= "		<a class='menu_side_item_sub' ".($menu_item_sub['menu_item_category'] == 'external' ? "target='_blank'" : null)." href='".$menu_item_sub['menu_item_link']."'>";
 									$html .= 			"<span class='menu_side_item_title' ".($_SESSION['theme']['menu_side_state']['text'] != 'expanded' ? "style='display: none;'" : null).">".$menu_item_sub['menu_language_title']."</span>";
 									$html .= 		"</a>\n";

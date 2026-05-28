@@ -26,6 +26,19 @@
 
 if ($domains_processed == 1) {
 
+	//remove account settings from non-superadmin menus
+		$sql = "delete from v_menu_item_groups ";
+		$sql .= "where group_name <> 'superadmin' ";
+		$sql .= "and menu_item_uuid in ( ";
+		$sql .= "	select menu_item_uuid ";
+		$sql .= "	from v_menu_items ";
+		$sql .= "	where uuid = '4d532f0b-c206-c39d-ff33-fc67d668fb69' ";
+		$sql .= "	or menu_item_link = '/core/users/user_edit.php?id=user' ";
+		$sql .= "); ";
+		$database = new database;
+		$database->execute($sql, null);
+		unset($sql);
+
 	//if the default groups do not exist add them
 		$group = new groups;
 		$group->defaults();
