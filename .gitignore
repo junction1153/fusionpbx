@@ -6,7 +6,7 @@ secure/mailto.bat
 secure/*.db
 secure/*.sqlite
 .DS_Store
-resources/templates/provision/*
+/resources/templates/provision
 app/provision/upload*
 .stfolder
 .stignore
